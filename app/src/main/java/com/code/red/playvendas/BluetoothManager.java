@@ -53,5 +53,14 @@ public class BluetoothManager {
         }
     }
 
+    public void startConnection(){
+        bluetoothAdapter.cancelDiscovery();
+        ConnectThread ct = null;
+        for(BluetoothDevice device : pairedDevices){
+            ct = new ConnectThread(device);
+        }
+        ct.run();
+    }
+
 
 }

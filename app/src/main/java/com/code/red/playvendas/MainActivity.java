@@ -34,11 +34,33 @@ public class MainActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BluetoothManager b = new BluetoothManager();
                 manageBluetooth();
+                BluetoothManager b = new BluetoothManager();
+                Snackbar.make(view, b.getBluetoothStatus() + "", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BluetoothManager b = new BluetoothManager();
+                b.startConnection();
+                Snackbar.make(view, b.getBluetoothStatus() + "", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        FloatingActionButton fab4 = (FloatingActionButton) findViewById(R.id.fab4);
+        fab4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BluetoothManager b = new BluetoothManager();
+
+                String mensagem = "BIRL CARALHO";
                 Snackbar.make(view, b.getBluetoothStatus() + "", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

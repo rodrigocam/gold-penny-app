@@ -1,28 +1,29 @@
 package com.code.red.playvendas;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
-    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-    private String setBluetooth(){
-        if(bluetoothAdapter != null){
-            if(bluetoothAdapter.isEnabled()) {
-                return "Bluetooh is enabled";
-            }else{
-                return "Bluetooh is not enabled";
-            }
-        }else {
-            return "Bluetooth not supported";
-            // bluetooth not supported
+    public void manageBluetooth(){
+        BluetoothManager b = new BluetoothManager();
+        Intent intent = b.activateBluetooth();
+        if(intent != null){
+            startActivityForResult(intent, b.REQUEST_ENABLE_BT);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int code, int result , Intent i){
+        Log.d("BluetoothStatus", "Code: " + code + " - Result:" + result + " - Intent: "+ i);
     }
 
     @Override
@@ -36,7 +37,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, setBluetooth(), Snackbar.LENGTH_LONG)
+                BluetoothManager b = new BluetoothManager();
+                manageBluetooth();
+                Snackbar.make(view, b.getBluetoothStatus() + "", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

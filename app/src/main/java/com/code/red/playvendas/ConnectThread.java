@@ -2,6 +2,7 @@ package com.code.red.playvendas;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -10,66 +11,73 @@ import java.util.UUID;
 
 
 public class ConnectThread extends Thread {
-    private final BluetoothSocket mmSocket;
-    private final BluetoothDevice mmDevice;
+    private final BluetoothSocket socket;
     private OutputStream os = null;
-    private final UUID key = UUID.randomUUID();
+    private final String LOG_TAG = "Connect Thread";
 
     public ConnectThread(BluetoothDevice device) {
-        // Use a temporary object that is later assigned to mmSocket,
-        // because mmSocket is final
         BluetoothSocket tmp = null;
-        mmDevice = device;
+        if(device != null){
 
-        // Get a BluetoothSocket to connect with the given BluetoothDevice
-        try {
-            // MY_UUID is the app's UUID string, also used by the server code
-            tmp = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
-            Log.d("porra", ""+ tmp.isConnected());
-            os = tmp.getOutputStream();
-        } catch (IOException e) {
-            Log.d("falha de output/socket", "Falhou meu brother");
+            try {
+                UUID uuid = device.getUuids()[0].getUuid();
+                tmp = device.createRfcommSocketToServiceRecord(uuid);
+                // TODO: verify is status false means that the device is really disconnected or it means more things.
+                Log.i(LOG_TAG, "Socket created, status: "+ getSocketStatus(tmp));
+
+                os = tmp.getOutputStream();
+                Log.i(LOG_TAG, "Output Stream available");
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Failed to obtain outputstream/socket with device, probably this device its not paired");
+            }
+            socket = tmp;
+        }else{
+            throw new Error("Cannot create ConnectionThread with null Device");
         }
-        mmSocket = tmp;
-
     }
 
-    public void run() {
-        // Cancel discovery because it will slow down the connection
-        //mBluetoothAdapter.cancelDiscovery();
-
+    public void connect() {
         try {
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception
-            mmSocket.connect();
-            try{
-                byte[] data = new byte[]{27,64,27,33,8,27,97,1,66,73,82,76,32,67,65,82,65,76,72,79,27,100,5,29,86,1};
-                os.write(data);
-            }catch(IOException exception){
-                exception.printStackTrace();
-                Log.d("output fail","Não rolou, meu brother...");
-            }
+            socket.connect();
         } catch (IOException connectException) {
-            connectException.printStackTrace();
-            Log.d("output fail","Não rolou, meu Parça...");
-            // Unable to connect; close the socket and get out
-            try {
-                mmSocket.close();
-            } catch (IOException closeException) { }
-            return;
+            Log.e(LOG_TAG,"Failed to activate socket connection");
+            Log.i(LOG_TAG,"Socket Status: " +  getSocketStatus(socket));
+            disconnect();
         }
-
-        // Do work to manage the connection (in a separate thread)
-        //manageConnectedSocket(mmSocket);
     }
 
     /** Will cancel an in-progress connection, and close the socket */
-    public void cancel() {
+    public void disconnect() {
         try {
-            mmSocket.close();
-        } catch (IOException e) { }
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Failed to close the socket");
+        }
     }
-    public void write(byte[] text){
 
+    public void write(String text){
+        if(socket.isConnected()){
+            try{
+                byte[] data = convertString(text);
+                os.write(data);
+                os.flush();
+            }catch(IOException exception){
+                exception.printStackTrace();
+                Log.e(LOG_TAG,"Write text failed, output stream not available");
+            }
+        }
+    }
+
+    private byte[] convertString(String text) {
+        // TODO: Convert text into byte[]
+        return new byte[]{27,64,27,33,8,27,97,1,66,73,82,76,32,67,65,82,65,76,72,79,27,100,5,29,86,1};
+    }
+
+    @NonNull
+    private String getSocketStatus(BluetoothSocket tmp) {
+        return (tmp.isConnected())?"Device connected":"Device Disconnected";
     }
 }

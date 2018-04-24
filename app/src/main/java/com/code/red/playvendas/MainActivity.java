@@ -1,23 +1,24 @@
 package com.code.red.playvendas;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity{
+    private BluetoothManager bluetoothManager;
 
     public void manageBluetooth(){
-        BluetoothManager b = new BluetoothManager();
-        Intent intent = b.activateBluetooth();
-        if(intent != null){
-            startActivityForResult(intent, b.REQUEST_ENABLE_BT);
+        if(!bluetoothManager.isBluetoothOn()){
+
+            Intent intent = bluetoothManager.activateBluetooth();
+            if(intent != null){
+                startActivityForResult(intent, bluetoothManager.REQUEST_ENABLE_BT);
+            }
         }
     }
 
@@ -30,38 +31,38 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        bluetoothManager = new BluetoothManager();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        Button bluetoothStatusButton = (Button) findViewById(R.id.bluetoothStatusButton);
+        Button printButton = (Button) findViewById(R.id.printButton);
+        Button startBluetoothButton = (Button) findViewById(R.id.startBluetoothButton);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        bluetoothStatusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, bluetoothManager.isBluetoothOn() + "", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        printButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bluetoothManager.writeTextInPrinter("AE");
+                Snackbar.make(view, bluetoothManager.isBluetoothOn() + "", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        startBluetoothButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 manageBluetooth();
-                BluetoothManager b = new BluetoothManager();
-                Snackbar.make(view, b.getBluetoothStatus() + "", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        fab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BluetoothManager b = new BluetoothManager();
-                b.startConnection();
-                Snackbar.make(view, b.getBluetoothStatus() + "", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        FloatingActionButton fab4 = (FloatingActionButton) findViewById(R.id.fab4);
-        fab4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BluetoothManager b = new BluetoothManager();
-
-                String mensagem = "BIRL CARALHO";
-                Snackbar.make(view, b.getBluetoothStatus() + "", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, bluetoothManager.isBluetoothOn() + "", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

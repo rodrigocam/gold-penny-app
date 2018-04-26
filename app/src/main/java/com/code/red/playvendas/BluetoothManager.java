@@ -2,6 +2,7 @@ package com.code.red.playvendas;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -44,10 +45,10 @@ public class BluetoothManager {
             return null;
         }
     }
-    public void writeTextInPrinter(String text) throws Error{
+    public void writeTextInPrinter(Context ctx, String text) throws Error{
         startConnection();
         if(ct != null){
-            ct.write(text);
+            ct.write(ctx, text);
         }
         closeConnection();
     }

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity{
         printButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bluetoothManager.writeTextInPrinter("AE");
+                bluetoothManager.writeTextInPrinter(getApplicationContext(), "AE");
                 Snackbar.make(view, bluetoothManager.isBluetoothOn() + "", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

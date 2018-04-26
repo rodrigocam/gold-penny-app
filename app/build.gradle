@@ -29,7 +29,4 @@ dependencies {
 
     // https://mvnrepository.com/artifact/xstream/xstream
     implementation group: 'xstream', name: 'xstream', version: '1.2.2'
-
-    implementation 'com.stanfy:gson-xml-java:0.1.+'
-
 }

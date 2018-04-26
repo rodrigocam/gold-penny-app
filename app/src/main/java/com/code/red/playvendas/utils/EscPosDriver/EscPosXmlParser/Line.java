@@ -1,13 +1,16 @@
-package com.code.red.playvendas.utils.EscPosDriver.XmlParser;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+package com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser;
 
 public class Line {
+
+    private String id;
 
     private String align;
 
     private String font;
+
+    private String cut;
+
+    private Integer feed;
 
     private String text;
 
@@ -15,12 +18,28 @@ public class Line {
         return this.align;
     }
 
+    public String getId(){
+        return this.id;
+    }
+
     public String getFont(){
         return this.font;
     }
 
+    public String getCut(){
+        return this.cut;
+    }
+
+    public Integer getFeed(){
+        return this.feed;
+    }
+
     public String getText(){
         return this.text;
+    }
+
+    public void setId(String id){
+        this.id = id;
     }
 
     public void setAlign(String align){
@@ -31,12 +50,19 @@ public class Line {
         this.font = font;
     }
 
+    public void setCut(String cut){
+        this.cut = cut;
+    }
+
+    public void setFeed(int feed){
+        this.feed = feed;
+    }
     public void setText(String text){
         this.text = text;
     }
 
     @Override
     public String toString(){
-        return this.align;
+        return this.id;
     }
 }

@@ -1,4 +1,4 @@
-package com.code.red.playvendas.utils.EscPosDriver.XmlParser;
+package com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -23,9 +23,11 @@ public class LineConverter implements Converter{
         }else{
             line.setText(null);
         }
-
+        line.setId(reader.getAttribute("id"));
         line.setAlign(reader.getAttribute("align"));
         line.setFont(reader.getAttribute("font"));
+        line.setCut(reader.getAttribute("cut"));
+        line.setFeed(Integer.parseInt(reader.getAttribute("feed")));
         return line;
     }
 

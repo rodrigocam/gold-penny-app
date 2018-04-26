@@ -1,4 +1,4 @@
-package com.code.red.playvendas.utils.EscPosDriver.XmlParser;
+package com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -24,6 +24,9 @@ public class Parser {
 
         this.xStream.aliasAttribute(Line.class, "align", "align");
         this.xStream.aliasAttribute(Line.class, "font", "font");
+        this.xStream.aliasAttribute(Line.class, "cut", "cut");
+        this.xStream.aliasAttribute(Line.class, "feed", "feed");
+
         this.xStream.addImplicitCollection(Document.class, "lines");
 
         this.xStream.registerConverter(new LineConverter());

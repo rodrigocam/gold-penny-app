@@ -1,5 +1,7 @@
 package com.code.red.playvendas.utils.EscPosDriver;
 
+import android.renderscript.ScriptGroup;
+
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Document;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Line;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Parser;
@@ -18,17 +20,31 @@ public class EscPosDriver {
     private Parser parser;
     private Document doc;
     private List<Line> lines;
+    private InputStream xmlFile;
 
-    public EscPosDriver(){
+    public EscPosDriver(InputStream xmlFile){
         this.byteData = new ByteArrayOutputStream();
         this.xStream = new XStream(new DomDriver());
         this.parser = new Parser();
+        this.xmlFile = xmlFile;
+
+        this.doc = this.parser.unmarshall(this.xmlFile);
+        this.lines = this.doc.lines;
     }
+
+    public void setXmlFile(InputStream xmlFile){
+        this.xmlFile = xmlFile;
+
+        this.doc = this.parser.unmarshall(this.xmlFile);
+        this.lines = this.doc.lines;
+    }
+
 
     public void setLineText(String lineId, String text){
         int index = 0;
         for(Line line: this.lines){
-            if(line.getId() == lineId){
+
+            if(line.getId().equals(lineId)){
                 line.setText(text);
                 this.lines.set(index, line);
             }
@@ -36,9 +52,7 @@ public class EscPosDriver {
         }
     }
 
-    public byte[] xmlToEsc(InputStream xmlStream){
-        this.doc = this.parser.unmarshall(xmlStream);
-        this.lines = this.doc.lines;
+    public byte[] xmlToEsc(){
 
         for(Line line: this.lines){
             writeLine(line);
@@ -54,6 +68,25 @@ public class EscPosDriver {
 
         return tmp;
     }
+
+    public byte[] customXmlToEsc(InputStream xmlFile, String lineId, String text){
+        setLineText(lineId, text);
+
+        for(Line line: this.lines){
+            writeLine(line);
+        }
+
+        byte [] tmp = this.byteData.toByteArray();
+
+        try {
+            this.byteData.flush();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return tmp;
+    }
+
 
     private void writeLine(Line line){
         // ESC @

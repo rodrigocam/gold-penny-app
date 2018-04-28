@@ -14,6 +14,7 @@ import com.code.red.playvendas.exceptions.SendDataException;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
 
 import java.io.InputStream;
+import java.util.Date;
 
 public class DisplayProductsActivity extends AppCompatActivity {
 
@@ -23,7 +24,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
     private Button printBtn;
 
     /* EscPos driver to parse xml template to esc/pos commands */
-    private EscPosDriver escPosDriver = new EscPosDriver();
+    private EscPosDriver escPosDriver;
 
     /* Data that will be printed on thermal printer */
     private byte [] printData;
@@ -41,7 +42,16 @@ public class DisplayProductsActivity extends AppCompatActivity {
         /* We need this to open the xml template from res/raw folder */
         this.xmlFile = getResources().openRawResource(R.raw.print_template);
 
-        this.printData = this.escPosDriver.xmlToEsc(this.xmlFile);
+        /* Creating a esc/pos driver with the given xmlfile */
+        this.escPosDriver = new EscPosDriver(this.xmlFile);
+
+        /* Customizing the text of some lines */
+        this.escPosDriver.setLineText("product", "HEINEKEN");
+        this.escPosDriver.setLineText("price", "7.00");
+        this.escPosDriver.setLineText("date", "Data: "+ new Date().toString());
+
+        /* Get print commands from xml */
+        this.printData = this.escPosDriver.xmlToEsc();
 
         this.printBtn = findViewById(R.id.printBtn);
         this.printBtn.setOnClickListener(new View.OnClickListener() {

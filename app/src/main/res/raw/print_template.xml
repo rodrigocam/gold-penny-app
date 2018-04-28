@@ -5,7 +5,7 @@
     <line id="product" align="center" font="dw_emphasized" cut="part" feed="1">
         <text>RED BULL</text>
     </line>
-    <line id="product" align="center" font="emphasized" cut="part" feed="2">
+    <line id="price" align="center" font="emphasized" cut="part" feed="2">
         <text>10.00</text>
     </line>
     <line id="date" align="left" font="regular" feed="4">

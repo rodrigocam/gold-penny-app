@@ -2,19 +2,31 @@ package com.code.red.playvendas;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 public class BluetoothManager {
+
     public final int REQUEST_ENABLE_BT = 10;
-    private ConnectThread ct;
-    private final String LOG_TAG = "Bluetooth Manager";
+    private final String LOG_TAG = "Bluetooth Service";
+    private boolean CONNECTED = false;
     
-    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    Set<BluetoothDevice> pairedDevices;
+    private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private BluetoothDevice bluetoohtDevice = null;
+    private BluetoothSocket bluetoothSocket = null;
+    private OutputStream socketOutput = null;
+    private Set<BluetoothDevice> pairedDevices;
+
+    private EscPosDriver escPosDriver = new EscPosDriver();
 
     public void updatePairedDevices() {
         pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -45,35 +57,52 @@ public class BluetoothManager {
             return null;
         }
     }
+
     public void writeTextInPrinter(Context ctx, String text) throws Error{
-        startConnection();
-        if(ct != null){
-            ct.write(ctx, text);
+        if(!CONNECTED){
+            startConnection();
         }
-        closeConnection();
+        byte [] data = escPosDriver.xmlToEsc(ctx.getResources()
+                                    .openRawResource(R.raw.template));
+        try{
+            socketOutput.write(data);
+            data = null;
+            closeConnection();
+        }catch(IOException e){
+            throw new Error("Failed to print");
+        }
     }
 
     private void startConnection() {
+
         // Disables discovery for faster connection
         bluetoothAdapter.cancelDiscovery();
 
-        BluetoothDevice device = null;
         try {
-            device = getPrinter();
+            bluetoohtDevice = getPrinter();
+
+            Method m = bluetoohtDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+            bluetoothSocket = (BluetoothSocket) m.invoke(bluetoohtDevice, 1);
+            bluetoothSocket.connect();
+            CONNECTED = true;
+            socketOutput = bluetoothSocket.getOutputStream();
+        }catch(Exception e){
+            Log.e(LOG_TAG, e.getMessage());
+            e.printStackTrace();
         }catch(Error e){
-            Log.e(LOG_TAG, "Printer not found in paired devices");
-        }
-        try{
-            ct = new ConnectThread(device);
-            ct.connect();
-        }catch (Error e){
-            Log.e(LOG_TAG, "No device paired, cant create Connection");
+            Log.e(LOG_TAG, e.getMessage());
         }
     }
 
     private void closeConnection(){
-        if(ct!= null){
-         ct.disconnect();
+        if(bluetoothSocket != null){
+            try{
+                bluetoothSocket.close();
+                CONNECTED = false;
+            }catch(IOException e){
+                Log.e(LOG_TAG, "FAILED TO CLOSE SOCKET");
+                e.printStackTrace();
+            }
         }
         // Reactivate discovery after connection
         bluetoothAdapter.startDiscovery();

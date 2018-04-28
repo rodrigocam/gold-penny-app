@@ -2,6 +2,7 @@ package com.code.red.playvendas;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,17 +38,7 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button bluetoothStatusButton = (Button) findViewById(R.id.bluetoothStatusButton);
         Button printButton = (Button) findViewById(R.id.printButton);
-        Button startBluetoothButton = (Button) findViewById(R.id.startBluetoothButton);
-
-        bluetoothStatusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, bluetoothManager.isBluetoothOn() + "", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         printButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,14 +49,6 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        startBluetoothButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                manageBluetooth();
-                Snackbar.make(view, bluetoothManager.isBluetoothOn() + "", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
 }

@@ -37,20 +37,6 @@
             android:layout_height="wrap_content"
             android:lineSpacingExtra="24sp"
             android:text="PrintText" />
-
-        <Button
-            android:id="@+id/startBluetoothButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lineSpacingExtra="24sp"
-            android:text="Turn Bluetooth On" />
-
-        <Button
-            android:id="@+id/bluetoothStatusButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lineSpacingExtra="24sp"
-            android:text="BluetoothStatus" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

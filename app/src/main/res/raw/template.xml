@@ -1,5 +1,11 @@
 <document>
-    <line align="center" font="emphasized" cut="part" feed="5">
-        <text>PLAY BAR</text>
+    <line id="title" align="center" font="dwdh_emphasized" cut="part" feed="1">
+        <text>RED CODE</text>
+    </line>
+    <line id="product" align="center" font="dw_emphasized" cut="part" feed="1">
+        <text>RED BULL</text>
+    </line>
+    <line id="product" align="center" font="emphasized" cut="part" feed="3">
+        <text>10.00</text>
     </line>
 </document>

@@ -29,12 +29,12 @@ public class UserRepository {
     }
 
     public LiveData<Product> getUser(int productId) {
-        refreshUser(productId);
+        refreshProduct(productId);
         // return a LiveData directly from the database.
         return productDao.load(productId);
     }
 
-    private void refreshUser(final int userId) {
+    private void refreshProduct(final int productId) {
         executor.execute(() -> {
             // running in a background thread
             // check if user was fetched recently
@@ -47,17 +47,14 @@ public class UserRepository {
 
                 Response response;
                 try {
-                    response = webservice.getUser(userId).execute();
+                    response = webservice.getProduct(productId).execute();
                 }catch (IOException e){
                     //TODO: Verify what this IOException means here;
                     e.printStackTrace();
                 }
 
-                try{
-                    productDao.save((Product)response.body());
-                }catch (Exception e){
+                productDao.save((Product)response.body());
 
-                }
 
                 // TODO check for error etc.
                 // Update the database.The LiveData will automatically refresh so

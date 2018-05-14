@@ -13,5 +13,5 @@ public interface Webservice {
      * replacement for the {user} placeholder in the @GET path
      */
     @GET("/products/{product}")
-    Call<Product> getUser(@Path("product") int productId);
+    Call<Product> getProduct(@Path("product") int productId);
 }

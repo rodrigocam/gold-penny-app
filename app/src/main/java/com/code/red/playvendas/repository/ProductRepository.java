@@ -16,13 +16,13 @@ import retrofit2.Response;
 
 
 @Singleton
-public class UserRepository {
+public class ProductRepository {
     private final Webservice webservice;
     private final ProductDao productDao;
     private final Executor executor;
 
     @Inject
-    public UserRepository(Webservice webservice, ProductDao productDao, Executor executor) {
+    public ProductRepository(Webservice webservice, ProductDao productDao, Executor executor) {
         this.webservice = webservice;
         this.productDao = productDao;
         this.executor = executor;
@@ -45,7 +45,7 @@ public class UserRepository {
             if (!userExists) {
                 // refresh the data
 
-                Response response;
+                Response response = null;
                 try {
                     response = webservice.getProduct(productId).execute();
                 }catch (IOException e){

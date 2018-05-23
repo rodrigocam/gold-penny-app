@@ -5,16 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.code.red.playvendas.R;
 import com.code.red.playvendas.bluetooth.BluetoothService;
 import com.code.red.playvendas.exceptions.BluetoothConnectionException;
 import com.code.red.playvendas.exceptions.SendDataException;
+import com.code.red.playvendas.model.Product;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 public class DisplayProductsActivity extends AppCompatActivity {
 
@@ -42,6 +45,20 @@ public class DisplayProductsActivity extends AppCompatActivity {
         /* We need this to open the xml template from res/raw folder */
         this.xmlFile = getResources().openRawResource(R.raw.print_template);
 
+        ListView productList = (ListView) findViewById(R.id.product_list);
+        Product[] products = new Product[5];
+        products[0] = new Product("Heineken", 16.80);
+        products[1] = new Product("Viagra", 22.50);
+        products[2] = new Product("Água", 4.50);
+        products[3] = new Product("Vinho Branco", 22.50);
+        products[4] = new Product("Rodrigo Lixo", 1.0);
+        productList.setAdapter(new ProductListAdapter(this, products));
+        print_stuff();
+
+
+    }
+
+    private void print_stuff() {
         /* Creating a esc/pos driver with the given xmlfile */
         this.escPosDriver = new EscPosDriver(this.xmlFile);
 

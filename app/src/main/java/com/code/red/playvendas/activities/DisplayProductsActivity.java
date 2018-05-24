@@ -46,12 +46,22 @@ public class DisplayProductsActivity extends AppCompatActivity {
         this.xmlFile = getResources().openRawResource(R.raw.print_template);
 
         ListView productList = (ListView) findViewById(R.id.product_list);
-        Product[] products = new Product[5];
+        Product[] products = new Product[15];
         products[0] = new Product("Heineken", 16.80);
         products[1] = new Product("Viagra", 22.50);
         products[2] = new Product("Água", 4.50);
         products[3] = new Product("Vinho Branco", 22.50);
         products[4] = new Product("Rodrigo Lixo", 1.0);
+        products[5] = new Product("Heineken", 16.80);
+        products[6] = new Product("Viagra", 22.50);
+        products[7] = new Product("Água", 4.50);
+        products[8] = new Product("Vinho Branco", 22.50);
+        products[9] = new Product("Rodrigo Lixo", 1.0);
+        products[10] = new Product("Heineken", 16.80);
+        products[11] = new Product("Viagra", 22.50);
+        products[12] = new Product("Água", 4.50);
+        products[13] = new Product("Vinho Branco", 22.50);
+        products[14] = new Product("Rodrigo Lixo", 1.0);
         productList.setAdapter(new ProductListAdapter(this, products));
         print_stuff();
 

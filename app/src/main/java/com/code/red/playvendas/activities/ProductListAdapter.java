@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.code.red.playvendas.R;
@@ -37,6 +38,14 @@ public class ProductListAdapter extends BaseAdapter {
         TextView nameText;
         TextView priceText;
         TextView quantityText;
+        Button plus;
+        Button minus;
+        int actualQuantity = 0;
+
+        public void modifyText(int quantity){
+            actualQuantity += quantity;
+            quantityText.setText(actualQuantity + "");
+        }
     }
 
     @Override
@@ -49,6 +58,21 @@ public class ProductListAdapter extends BaseAdapter {
             holder.nameText = (TextView) convertView.findViewById(R.id.name);
             holder.quantityText = (TextView) convertView.findViewById(R.id.quantity);
             holder.priceText = (TextView) convertView.findViewById(R.id.price);
+            holder.plus = (Button) convertView.findViewById(R.id.plus);
+            holder.minus = (Button) convertView.findViewById(R.id.minus);
+            holder.actualQuantity = 0;
+            holder.plus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.modifyText(1);
+                }
+            });
+            holder.minus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.modifyText(-1);
+                }
+            });
 
             convertView.setTag(holder);
         }else{

@@ -3,6 +3,8 @@ package com.code.red.playvendas.activities;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -45,25 +47,27 @@ public class DisplayProductsActivity extends AppCompatActivity {
         /* We need this to open the xml template from res/raw folder */
         this.xmlFile = getResources().openRawResource(R.raw.print_template);
 
-        ListView productList = (ListView) findViewById(R.id.product_list);
-        Product[] products = new Product[15];
+        RecyclerView productList = (RecyclerView) findViewById(R.id.product_list);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        productList.setLayoutManager(manager);
+
+
+        Product[] products = new Product[9];
         products[0] = new Product("Heineken", 16.80);
         products[1] = new Product("Viagra", 22.50);
         products[2] = new Product("Água", 4.50);
         products[3] = new Product("Vinho Branco", 22.50);
         products[4] = new Product("Rodrigo Lixo", 1.0);
-        products[5] = new Product("Heineken", 16.80);
-        products[6] = new Product("Viagra", 22.50);
-        products[7] = new Product("Água", 4.50);
-        products[8] = new Product("Vinho Branco", 22.50);
-        products[9] = new Product("Rodrigo Lixo", 1.0);
-        products[10] = new Product("Heineken", 16.80);
-        products[11] = new Product("Viagra", 22.50);
-        products[12] = new Product("Água", 4.50);
-        products[13] = new Product("Vinho Branco", 22.50);
-        products[14] = new Product("Rodrigo Lixo", 1.0);
+
         productList.setAdapter(new ProductListAdapter(this, products));
-        print_stuff();
+
+        products[5] = new Product("Rodrigo Lixo", 1.0);
+        products[6] = new Product("Rodrigo Lixo", 1.0);
+        products[7] = new Product("Rodrigo Lixo", 1.0);
+        products[8] = new Product("Rodrigo Lixo", 1.0);
+
+        //print_stuff();
 
 
     }

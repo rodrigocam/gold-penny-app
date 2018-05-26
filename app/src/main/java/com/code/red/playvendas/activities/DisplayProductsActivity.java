@@ -42,10 +42,10 @@ public class DisplayProductsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_products);
 
-        this.btService = new BluetoothService();
+        //this.btService = new BluetoothService();
 
         /* We need this to open the xml template from res/raw folder */
-        this.xmlFile = getResources().openRawResource(R.raw.print_template);
+        //this.xmlFile = getResources().openRawResource(R.raw.print_template);
 
         RecyclerView productList = (RecyclerView) findViewById(R.id.product_list);
 
@@ -105,22 +105,22 @@ public class DisplayProductsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        try {
-            this.btService.startConnection();
-        }catch(BluetoothConnectionException e){
+        //try {
+            //this.btService.startConnection();
+        //}catch(BluetoothConnectionException e){
             /* alert dialog saying that
             bluetooth connection failed and return
             to previous activity */
-        }
+        //}
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try{
-            this.btService.closeConnection();
-        }catch(BluetoothConnectionException e){
-            Toast.makeText(this, "FAILED TO CLOSE BLUEETOOTH CONNECTION", Toast.LENGTH_SHORT);
-        }
+        //try{
+        //    this.btService.closeConnection();
+        //}catch(BluetoothConnectionException e){
+        //    Toast.makeText(this, "FAILED TO CLOSE BLUEETOOTH CONNECTION", Toast.LENGTH_SHORT);
+        //}
     }
 }

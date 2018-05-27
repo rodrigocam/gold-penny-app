@@ -28,7 +28,7 @@ public class ProductRepository {
         this.executor = executor;
     }
 
-    public LiveData<Product> getUser(int productId) {
+    public LiveData<Product> getProduct(int productId) {
         refreshProduct(productId);
         // return a LiveData directly from the database.
         return productDao.load(productId);

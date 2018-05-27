@@ -7,6 +7,10 @@ import android.arch.persistence.room.Query;
 
 import com.code.red.playvendas.model.Product;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 @Dao
@@ -16,4 +20,7 @@ public interface ProductDao {
 
     @Query("SELECT * FROM product WHERE id = :productId")
     LiveData<Product> load(int productId);
+
+    @Query("SELECT * FROM product")
+    List<Product> loadAll();
 }

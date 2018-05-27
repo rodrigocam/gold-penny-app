@@ -1,12 +1,14 @@
 package com.code.red.playvendas.viewmodel;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
+
 import com.code.red.playvendas.model.Token;
 import com.code.red.playvendas.repository.TokenRepository;
 
 import javax.inject.Inject;
 
-public class TokenViewModel {
+public class TokenViewModel extends ViewModel{
     public TokenRepository tokenRepository;
     public LiveData<Token> token;
 

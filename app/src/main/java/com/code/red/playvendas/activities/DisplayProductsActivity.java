@@ -1,5 +1,6 @@
 package com.code.red.playvendas.activities;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,15 +17,22 @@ import com.code.red.playvendas.exceptions.BluetoothConnectionException;
 import com.code.red.playvendas.exceptions.SendDataException;
 import com.code.red.playvendas.model.Product;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
+import com.code.red.playvendas.viewmodel.TokenViewModel;
+import com.code.red.playvendas.viewmodel.ViewModelFactory;
 
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class DisplayProductsActivity extends AppCompatActivity {
 
     private BluetoothService btService = null;
 
+    @Inject
+    ViewModelFactory viewModelFactory;
+    private TokenViewModel tokenViewModel = null;
     /* Buttons */
     private Button printBtn;
 
@@ -52,9 +60,11 @@ public class DisplayProductsActivity extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         productList.setLayoutManager(manager);
 
+        tokenViewModel = ViewModelProviders.of(this,viewModelFactory).get(TokenViewModel.class);
+        tokenViewModel.init();
 
         Product[] products = new Product[9];
-        products[0] = new Product(0,"Heineken", 16.80);
+        products[0] = new Product(0,"HEINEKEN", 16.80);
         products[1] = new Product(1,"Viagra", 22.50);
         products[2] = new Product(2,"Água", 4.50);
         products[3] = new Product(3,"Vinho Branco", 22.50);
@@ -68,7 +78,9 @@ public class DisplayProductsActivity extends AppCompatActivity {
         products[8] = new Product(8,"Rodrigo Lixo", 1.0);
 
         //print_stuff();
-
+        tokenViewModel.getToken().observe(this, token -> {
+            products[0] = new Product(0, token.getToken(), 10.0);
+        });
 
     }
 

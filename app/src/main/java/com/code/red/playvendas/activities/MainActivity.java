@@ -1,5 +1,7 @@
 package com.code.red.playvendas.activities;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +19,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.code.red.playvendas.R;
+import com.code.red.playvendas.model.Token;
+import com.code.red.playvendas.viewmodel.TokenViewModel;
+import com.code.red.playvendas.viewmodel.ViewModelFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,18 +30,26 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button sendToken = null;
     private EditText token = null;
     private StringRequest stringRequest = null;
+//    @Inject
+//    ViewModelFactory viewModelFactory;
+    private TokenViewModel tokenViewModel = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         sendToken = findViewById(R.id.sendToken);
         token = findViewById(R.id.token);
+//        tokenViewModel = ViewModelProviders.of(this,viewModelFactory).get(TokenViewModel.class);
+        tokenViewModel = ViewModelProviders.of(this).get(TokenViewModel.class);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         String url ="http://206.189.123.66/api/v1/products";
@@ -47,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(stringRequest == null){
                     StringRequest stringRequest = getRequest(url, token.getText().toString());
-                    queue.add(stringRequest);
+                    //queue.add(stringRequest);
+                    createToken("[{id:0}]","Token 0a056e99fd9310bab4a99fcc4a8d227db01a91c6");
                 }
             }
         });
@@ -59,17 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     @Override
                     public void onResponse(String response) {
-                        try {
-                            JSONArray teste = new JSONArray(response);
-                            //startActivity(new Intent(getApplicationContext(), DisplayProductsActivity.class));
-//                            Log.d("first", ""+teste.getJSONObject(0).getDouble("price"));
-//                            Log.d("first", ""+teste.getJSONObject(0).getString("name"));    Log.d("first", ""+teste.getJSONObject(0).getDouble("price"));
-//                            Log.d("first", ""+teste.getJSONObject(0).getInt("id"));
-                            // TODO: save products on db and start the new activity
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
+                        createToken(response, token);
                         Log.d("Response", response);
                     }
                 },
@@ -97,5 +101,27 @@ public class MainActivity extends AppCompatActivity {
         return getRequest;
 
 
+    }
+
+    private void createToken(String response, String token) {
+        try {
+            JSONArray teste = new JSONArray(response);
+            try{
+                teste.getJSONObject(0).getInt("id");
+                Token newToken = new Token();
+                newToken.setId(0);
+                newToken.setToken(token);
+                tokenViewModel.saveToken(newToken);
+                startActivity(new Intent(getApplicationContext(), DisplayProductsActivity.class));
+            }catch (Exception e){
+                e.printStackTrace();
+                //TODO Toast error on token.
+            }
+//                            Log.d("first", ""+teste.getJSONObject(0).getDouble("price"));
+//                            Log.d("first", ""+teste.getJSONObject(0).getString("name"));    Log.d("first", ""+teste.getJSONObject(0).getDouble("price"));
+//                            Log.d("first", ""+teste.getJSONObject(0).getInt("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -54,18 +54,18 @@ public class DisplayProductsActivity extends AppCompatActivity {
 
 
         Product[] products = new Product[9];
-        products[0] = new Product("Heineken", 16.80);
-        products[1] = new Product("Viagra", 22.50);
-        products[2] = new Product("Água", 4.50);
-        products[3] = new Product("Vinho Branco", 22.50);
-        products[4] = new Product("Rodrigo Lixo", 1.0);
+        products[0] = new Product(0,"Heineken", 16.80);
+        products[1] = new Product(1,"Viagra", 22.50);
+        products[2] = new Product(2,"Água", 4.50);
+        products[3] = new Product(3,"Vinho Branco", 22.50);
+        products[4] = new Product(4,"Rodrigo Lixo", 1.0);
 
         productList.setAdapter(new ProductListAdapter(this, products));
 
-        products[5] = new Product("Rodrigo Lixo", 1.0);
-        products[6] = new Product("Rodrigo Lixo", 1.0);
-        products[7] = new Product("Rodrigo Lixo", 1.0);
-        products[8] = new Product("Rodrigo Lixo", 1.0);
+        products[5] = new Product(5,"Rodrigo Lixo", 1.0);
+        products[6] = new Product(6,"Rodrigo Lixo", 1.0);
+        products[7] = new Product(7,"Rodrigo Lixo", 1.0);
+        products[8] = new Product(8,"Rodrigo Lixo", 1.0);
 
         //print_stuff();
 

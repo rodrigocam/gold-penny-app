@@ -1,6 +1,7 @@
 package com.code.red.playvendas.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
@@ -13,10 +14,14 @@ public class Product {
     public Product(){
         super();
     }
-    public Product(String name, Double price){
+
+    @Ignore
+    public Product(int id,String name, Double price){
+        this.id = id;
         this.name = name;
         this.price = price;
     }
+
     public int getId() {
         return id;
     }

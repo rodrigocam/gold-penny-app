@@ -30,8 +30,8 @@ public class DisplayProductsActivity extends AppCompatActivity {
 
     private BluetoothService btService = null;
 
-    @Inject
-    ViewModelFactory viewModelFactory;
+    //@Inject
+    // viewModelFactory;
     private TokenViewModel tokenViewModel = null;
     /* Buttons */
     private Button printBtn;
@@ -60,7 +60,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         productList.setLayoutManager(manager);
 
-        tokenViewModel = ViewModelProviders.of(this,viewModelFactory).get(TokenViewModel.class);
+        tokenViewModel = ViewModelProviders.of(this).get(TokenViewModel.class);
         tokenViewModel.init();
 
         Product[] products = new Product[9];

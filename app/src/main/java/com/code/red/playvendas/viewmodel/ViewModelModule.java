@@ -1,14 +1,10 @@
-package com.code.red.playvendas.viewmodel;
+package com.code.red.playvendas.viewmodel;import android.arch.lifecycle.ViewModel;
 
-import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.code.red.playvendas.viewmodel.ViewModelKey;
 
 import dagger.Binds;
-import dagger.MapKey;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
 
@@ -18,13 +14,8 @@ public abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(TokenViewModel.class)
-    abstract ViewModel userViewModel(TokenViewModel tokenViewModel);
+    abstract ViewModel bindTokenViewModel(TokenViewModel repoViewModel);
 
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @MapKey
-    @interface ViewModelKey {
-        Class<? extends ViewModel> value();
-    }
+    @Binds
+    abstract ViewModelProvider.Factory bindViewModelFactory(ViewModelFactory factory);
 }

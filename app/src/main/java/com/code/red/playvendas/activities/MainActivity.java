@@ -1,8 +1,10 @@
 package com.code.red.playvendas.activities;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,96 +34,51 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity {
+import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+import dagger.android.support.AndroidSupportInjection;
+import dagger.android.support.HasSupportFragmentInjector;
 
-    private Button sendToken = null;
-    private EditText token = null;
-    private StringRequest stringRequest = null;
-//    @Inject
-//    ViewModelFactory viewModelFactory;
-    private TokenViewModel tokenViewModel = null;
+public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+
+    @Inject
+    DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
+
+    private static String USER_LOGIN = "JakeWharton";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
-        sendToken = findViewById(R.id.sendToken);
-        token = findViewById(R.id.token);
-//        tokenViewModel = ViewModelProviders.of(this,viewModelFactory).get(TokenViewModel.class);
-        tokenViewModel = ViewModelProviders.of(this).get(TokenViewModel.class);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://206.189.123.66/api/v1/products";
-
-
-        sendToken.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(stringRequest == null){
-                    StringRequest stringRequest = getRequest(url, token.getText().toString());
-                    //queue.add(stringRequest);
-                    createToken("[{id:0}]","Token 0a056e99fd9310bab4a99fcc4a8d227db01a91c6");
-                }
-            }
-        });
+        this.configureDagger();
+        this.showFragment(savedInstanceState);
     }
 
-    public StringRequest getRequest(String url, String token){
-        StringRequest getRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        createToken(response, token);
-                        Log.d("Response", response);
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Toast informing error
-                        stringRequest = null;
-                        //
-                        Log.d("ERROR","error => "+error.toString());
-                    }
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                // TODO: param token should be used here instead of hardcoded token
-                params.put("Authorization", "Token 0a056e99fd9310bab4a99fcc4a8d227db01a91c6");
-                return params;
-            }
-        };
-
-        return getRequest;
-
-
+    @Override
+    public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingAndroidInjector;
     }
 
-    private void createToken(String response, String token) {
-        try {
-            JSONArray teste = new JSONArray(response);
-            try{
-                teste.getJSONObject(0).getInt("id");
-                Token newToken = new Token();
-                newToken.setId(0);
-                newToken.setToken(token);
-                tokenViewModel.saveToken(newToken);
-                startActivity(new Intent(getApplicationContext(), DisplayProductsActivity.class));
-            }catch (Exception e){
-                e.printStackTrace();
-                //TODO Toast error on token.
-            }
-//                            Log.d("first", ""+teste.getJSONObject(0).getDouble("price"));
-//                            Log.d("first", ""+teste.getJSONObject(0).getString("name"));    Log.d("first", ""+teste.getJSONObject(0).getDouble("price"));
-//                            Log.d("first", ""+teste.getJSONObject(0).getInt("id"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+    // ---
+
+    private void showFragment(Bundle savedInstanceState){
+        if (savedInstanceState == null) {
+
+            TokenFragment fragment = new TokenFragment();
+
+            Bundle bundle = new Bundle();
+            fragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, fragment, null)
+                    .commit();
         }
+    }
+
+    private void configureDagger(){
+        AndroidInjection.inject(this);
     }
 }

@@ -9,7 +9,7 @@ import com.code.red.playvendas.model.Product;
 import com.code.red.playvendas.model.Token;
 
 @Database(entities={Product.class, Token.class}, version=1)
-public abstract class playdb extends RoomDatabase {
+public abstract class PlayDatabase extends RoomDatabase {
     public abstract ProductDao productDao();
     public abstract TokenDao tokenDao();
 }

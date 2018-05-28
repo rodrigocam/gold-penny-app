@@ -1,5 +1,6 @@
 package com.code.red.playvendas.viewmodel;
 
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 

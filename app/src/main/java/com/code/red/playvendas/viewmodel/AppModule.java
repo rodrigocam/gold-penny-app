@@ -47,7 +47,7 @@ public class AppModule {
     @Provides
     @Singleton
     TokenRepository provideTokenRepository(Webservice webservice, TokenDao userDao, Executor executor) {
-        return new TokenRepository(userDao);
+        return new TokenRepository(userDao, executor);
     }
 
     // --- NETWORK INJECTION ---

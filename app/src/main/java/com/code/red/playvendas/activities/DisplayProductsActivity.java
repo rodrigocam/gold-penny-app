@@ -1,37 +1,37 @@
 package com.code.red.playvendas.activities;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.code.red.playvendas.R;
 import com.code.red.playvendas.bluetooth.BluetoothService;
-import com.code.red.playvendas.exceptions.BluetoothConnectionException;
 import com.code.red.playvendas.exceptions.SendDataException;
 import com.code.red.playvendas.model.Product;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
 import com.code.red.playvendas.viewmodel.TokenViewModel;
-import com.code.red.playvendas.viewmodel.ViewModelFactory;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 
 public class DisplayProductsActivity extends AppCompatActivity {
 
     private BluetoothService btService = null;
 
-    //@Inject
-    // viewModelFactory;
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
     private TokenViewModel tokenViewModel = null;
     /* Buttons */
     private Button printBtn;
@@ -50,6 +50,8 @@ public class DisplayProductsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_products);
 
+        this.configureDagger();
+
         //this.btService = new BluetoothService();
 
         /* We need this to open the xml template from res/raw folder */
@@ -60,28 +62,34 @@ public class DisplayProductsActivity extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         productList.setLayoutManager(manager);
 
-        tokenViewModel = ViewModelProviders.of(this).get(TokenViewModel.class);
+        tokenViewModel = ViewModelProviders.of(this, viewModelFactory).get(TokenViewModel.class);
         tokenViewModel.init();
+        ArrayList<Product> products = new ArrayList<Product>();
+        products.add(new Product(0,"HEINEKEN", 16.80));
+        products.add(new Product(1,"Viagra", 22.50));
+        products.add(new Product(2,"Água", 4.50));
+        products.add(new Product(3,"Vinho Branco", 22.50));
+        products.add(new Product(4,"Rodrigo Lixo", 1.0));
 
-        Product[] products = new Product[9];
-        products[0] = new Product(0,"HEINEKEN", 16.80);
-        products[1] = new Product(1,"Viagra", 22.50);
-        products[2] = new Product(2,"Água", 4.50);
-        products[3] = new Product(3,"Vinho Branco", 22.50);
-        products[4] = new Product(4,"Rodrigo Lixo", 1.0);
+        refreshProductList(productList, products);
 
-        productList.setAdapter(new ProductListAdapter(this, products));
-
-        products[5] = new Product(5,"Rodrigo Lixo", 1.0);
-        products[6] = new Product(6,"Rodrigo Lixo", 1.0);
-        products[7] = new Product(7,"Rodrigo Lixo", 1.0);
-        products[8] = new Product(8,"Rodrigo Lixo", 1.0);
+        products.add(new Product(5,"Rodrigo Lixo", 1.0));
+        products.add(new Product(6,"Rodrigo Lixo", 1.0));
+        products.add(new Product(7,"Rodrigo Lixo", 1.0));
+        products.add(new Product(8,"Rodrigo Lixo", 1.0));
 
         //print_stuff();
         tokenViewModel.getToken().observe(this, token -> {
-            products[0] = new Product(0, token.getToken(), 10.0);
+            Log.d("AAAA",token.getToken());
+            Log.d("AAAA","AAAAA\n\n\n\n\n\n\n\n\n");
+            products.set(0, new Product(0, token.getToken(), 10.0));
+            refreshProductList(productList, products);
         });
 
+    }
+
+    private void refreshProductList(RecyclerView productList, ArrayList<Product> products) {
+        productList.setAdapter(new ProductListAdapter(this, products.toArray(new Product[products.size()])));
     }
 
     private void print_stuff() {
@@ -112,6 +120,10 @@ public class DisplayProductsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void configureDagger(){
+        AndroidInjection.inject(this);
     }
 
     @Override

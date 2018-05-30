@@ -8,7 +8,7 @@ import dagger.android.ContributesAndroidInjector;
 
 @Module
 public abstract class ActivityModule {
-    @ContributesAndroidInjector(modules = FragmentModule.class)
+    @ContributesAndroidInjector
     abstract MainActivity contributeMainActivity();
     @ContributesAndroidInjector
     abstract DisplayProductsActivity contributeDisplayProductsActivity();

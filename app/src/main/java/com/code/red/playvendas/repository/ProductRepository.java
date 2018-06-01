@@ -1,12 +1,18 @@
 package com.code.red.playvendas.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.util.Log;
 
 import com.code.red.playvendas.dao.ProductDao;
 import com.code.red.playvendas.model.Product;
+import com.code.red.playvendas.model.Token;
 import com.code.red.playvendas.utils.Webservice;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
@@ -28,32 +34,34 @@ public class ProductRepository {
         this.executor = executor;
     }
 
-    public LiveData<Product> getProduct(int productId) {
-        refreshProduct(productId);
-        // return a LiveData directly from the database.
-        return productDao.load(productId);
+    public LiveData<List<Product>> getProducts(Token token) {
+        refreshProducts(token);
+        return productDao.loadAll();
     }
 
-    private void refreshProduct(final int productId) {
+    private void refreshProducts(Token token) {
         executor.execute(() -> {
-            // running in a background thread
-            // check if user was fetched recently
-
-            // TODO: Verify what the hell this was.
-            //boolean userExists = productDao.hasUser(FRESH_TIMEOUT);
-            boolean userExists = true;
-            if (!userExists) {
+            if (productDao.getProductCount() == 0) {
                 // refresh the data
 
                 Response response = null;
                 try {
-                    response = webservice.getProduct(productId).execute();
+                    response = webservice.getProducts("Token "+token.getToken()).execute();
                 }catch (IOException e){
                     //TODO: Verify what this IOException means here;
                     e.printStackTrace();
                 }
-
-                productDao.save((Product)response.body());
+                List<Product> products = null;
+                try{
+                    products = (List<Product>) response.body();
+                }catch (Exception e){
+                    Log.d("ProductRepository", "Not today, buddy.");
+                }
+                for(Product product : products){
+                    executor.execute(()->{
+                        productDao.save(product);
+                    });
+                }
 
 
                 // TODO check for error etc.

@@ -14,7 +14,12 @@ public abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(TokenViewModel.class)
-    abstract ViewModel bindTokenViewModel(TokenViewModel repoViewModel);
+    abstract ViewModel bindTokenViewModel(TokenViewModel tokenViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProductViewModel.class)
+    abstract ViewModel bindProductViewModel(ProductViewModel productViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(ViewModelFactory factory);

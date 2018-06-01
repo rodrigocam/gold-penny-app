@@ -3,8 +3,10 @@ package com.code.red.playvendas.viewmodel;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 
+import com.code.red.playvendas.dao.ProductDao;
 import com.code.red.playvendas.dao.TokenDao;
 import com.code.red.playvendas.database.PlayDatabase;
+import com.code.red.playvendas.repository.ProductRepository;
 import com.code.red.playvendas.repository.TokenRepository;
 import com.code.red.playvendas.utils.Webservice;
 import com.google.gson.Gson;
@@ -35,8 +37,14 @@ public class AppModule {
 
     @Provides
     @Singleton
-    TokenDao provideTokenDao(PlayDatabase database) { return database.tokenDao(); }
-
+    TokenDao provideTokenDao(PlayDatabase database) {
+        return database.tokenDao();
+    }
+    @Provides
+    @Singleton
+    ProductDao provideProductDao(PlayDatabase database) {
+        return database.productDao();
+    }
     // --- REPOSITORY INJECTION ---
 
     @Provides
@@ -46,8 +54,14 @@ public class AppModule {
 
     @Provides
     @Singleton
-    TokenRepository provideTokenRepository(Webservice webservice, TokenDao userDao, Executor executor) {
-        return new TokenRepository(userDao, executor);
+    TokenRepository provideTokenRepository(Webservice webservice, TokenDao tokenDao, Executor executor) {
+        return new TokenRepository(tokenDao, executor);
+    }
+
+    @Provides
+    @Singleton
+    ProductRepository provideProductRepository(Webservice webservice, ProductDao productDao, Executor executor) {
+        return new ProductRepository(webservice,productDao, executor);
     }
 
     // --- NETWORK INJECTION ---

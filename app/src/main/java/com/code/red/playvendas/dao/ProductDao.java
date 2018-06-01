@@ -1,6 +1,7 @@
 package com.code.red.playvendas.dao;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -22,5 +23,8 @@ public interface ProductDao {
     LiveData<Product> load(int productId);
 
     @Query("SELECT * FROM product")
-    List<Product> loadAll();
+    LiveData<List<Product>> loadAll();
+
+    @Query("SELECT COUNT(*) from product")
+    int getProductCount();
 }

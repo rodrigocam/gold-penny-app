@@ -1,5 +1,6 @@
 package com.code.red.playvendas.activities;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +17,14 @@ import com.code.red.playvendas.bluetooth.BluetoothService;
 import com.code.red.playvendas.exceptions.SendDataException;
 import com.code.red.playvendas.model.Product;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
+import com.code.red.playvendas.viewmodel.ProductViewModel;
 import com.code.red.playvendas.viewmodel.TokenViewModel;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
@@ -32,6 +36,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    private ProductViewModel productViewModel = null;
     private TokenViewModel tokenViewModel = null;
     /* Buttons */
     private Button printBtn;
@@ -64,31 +69,21 @@ public class DisplayProductsActivity extends AppCompatActivity {
 
         tokenViewModel = ViewModelProviders.of(this, viewModelFactory).get(TokenViewModel.class);
         tokenViewModel.init();
-        ArrayList<Product> products = new ArrayList<Product>();
-        products.add(new Product(0,"HEINEKEN", 16.80));
-        products.add(new Product(1,"Viagra", 22.50));
-        products.add(new Product(2,"Água", 4.50));
-        products.add(new Product(3,"Vinho Branco", 22.50));
-        products.add(new Product(4,"Rodrigo Lixo", 1.0));
+        productViewModel = ViewModelProviders.of(this,viewModelFactory).get(ProductViewModel.class);
 
-        refreshProductList(productList, products);
 
-        products.add(new Product(5,"Rodrigo Lixo", 1.0));
-        products.add(new Product(6,"Rodrigo Lixo", 1.0));
-        products.add(new Product(7,"Rodrigo Lixo", 1.0));
-        products.add(new Product(8,"Rodrigo Lixo", 1.0));
 
         //print_stuff();
         tokenViewModel.getToken().observe(this, token -> {
-            Log.d("AAAA",token.getToken());
-            Log.d("AAAA","AAAAA\n\n\n\n\n\n\n\n\n");
-            products.set(0, new Product(0, token.getToken(), 10.0));
-            refreshProductList(productList, products);
+            productViewModel.init(token);
+            productViewModel.getProducts().observe(this, products->{
+                refreshProductList(productList, products);
+            });
         });
 
     }
 
-    private void refreshProductList(RecyclerView productList, ArrayList<Product> products) {
+    private void refreshProductList(RecyclerView productList, List<Product> products) {
         productList.setAdapter(new ProductListAdapter(this, products.toArray(new Product[products.size()])));
     }
 
@@ -144,7 +139,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
         //try{
         //    this.btService.closeConnection();
         //}catch(BluetoothConnectionException e){
-        //    Toast.makeText(this, "FAILED TO CLOSE BLUEETOOTH CONNECTION", Toast.LENGTH_SHORT);
+        //    Toast.makeText(this, "FAILED TO CLOSE BLUETOOTH CONNECTION", Toast.LENGTH_SHORT);
         //}
     }
 }

@@ -94,7 +94,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
 
         for(Product product:selectedProducts){
             this.escPosDriver.setLineText("product", product.getName());
-            this.escPosDriver.setLineText("price",  product.getPrice() +"");
+            this.escPosDriver.setLineText("price",  "R$ "+ product.getPrice() +"0");
             this.escPosDriver.setLineText("date", "Data: "+ new Date().toString());
 
             for(int i = 0; i < product.getQuantity(); i++){

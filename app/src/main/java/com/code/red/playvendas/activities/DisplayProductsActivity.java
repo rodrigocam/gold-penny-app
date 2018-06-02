@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.code.red.playvendas.R;
@@ -41,7 +42,9 @@ public class DisplayProductsActivity extends AppCompatActivity {
 
     /* Buttons */
     private Button printBtn;
+    private Button gerarTotal;
 
+    private TextView total;
     /* EscPos driver to parse xml template to esc/pos commands */
     private EscPosDriver escPosDriver;
 
@@ -55,6 +58,14 @@ public class DisplayProductsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_products);
+        total = (TextView) findViewById(R.id.total);
+        gerarTotal = (Button) findViewById(R.id.gerarTotal);
+        gerarTotal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateTotalPrice();
+            }
+        });
 
         this.configureDagger();
 
@@ -74,7 +85,6 @@ public class DisplayProductsActivity extends AppCompatActivity {
         tokenViewModel.init();
         productViewModel = ViewModelProviders.of(this,viewModelFactory).get(ProductViewModel.class);
 
-
         setUpPrintButton();
         tokenViewModel.getToken().observe(this, token -> {
             productViewModel.init(token);
@@ -83,6 +93,18 @@ public class DisplayProductsActivity extends AppCompatActivity {
             });
         });
 
+    }
+
+    private void updateTotalPrice() {
+        double totalPrice = 0;
+        double price;
+        for(ProductListAdapter.ViewHolder product: getProductListHolders()){
+            if(product.subtotal.getText().toString() != ""){
+                price = Double.parseDouble(product.subtotal.getText().toString());
+                totalPrice += price;
+            }
+        }
+        this.total.setText("R$ " + totalPrice + "0");
     }
 
     private void refreshProductList(RecyclerView productList, List<Product> products) {

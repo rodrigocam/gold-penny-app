@@ -1,6 +1,7 @@
 package com.code.red.playvendas.utils.EscPosDriver;
 
 import android.renderscript.ScriptGroup;
+import android.util.Log;
 
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Document;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Line;
@@ -39,12 +40,11 @@ public class EscPosDriver {
         this.lines = this.doc.lines;
     }
 
-
     public void setLineText(String lineId, String text){
         int index = 0;
-        for(Line line: this.lines){
+        for(Line line: this.lines) {
 
-            if(line.getId().equals(lineId)){
+            if (line.getId().equals(lineId)) {
                 line.setText(text);
                 this.lines.set(index, line);
             }
@@ -54,17 +54,13 @@ public class EscPosDriver {
 
     public byte[] xmlToEsc(){
 
+        this.byteData.reset();
+
         for(Line line: this.lines){
             writeLine(line);
         }
 
         byte [] tmp = this.byteData.toByteArray();
-
-        try {
-            this.byteData.flush();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
 
         return tmp;
     }

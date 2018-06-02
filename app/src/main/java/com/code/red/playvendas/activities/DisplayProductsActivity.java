@@ -103,22 +103,27 @@ public class DisplayProductsActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<Product> getSelectedProducts(){
+    private ArrayList<ProductListAdapter.ViewHolder> getProductListHolders(){
         RecyclerView productList = (RecyclerView) findViewById(R.id.product_list);
-        ArrayList<Product> products = new ArrayList<Product>();
+        ArrayList<ProductListAdapter.ViewHolder> listItems = new ArrayList<ProductListAdapter.ViewHolder>();
         ProductListAdapter.ViewHolder product = null;
-
-        for(int i=0; i< productList.getChildCount();i++){
+        for(int i=0; i< productList.getChildCount();i++) {
             View child = productList.getChildAt(i);
-            Log.d("Product", child.toString());
             product = (ProductListAdapter.ViewHolder) productList.getChildViewHolder(child);
+            listItems.add(product);
+        }
+        return listItems;
+    }
 
+    private ArrayList<Product> getSelectedProducts(){
+        ArrayList<Product> products = new ArrayList<Product>();
+        for(ProductListAdapter.ViewHolder product: getProductListHolders()){
             Log.d("Product", product.toString());
             if(product.actualQuantity > 0){
                 String name = product.nameText.getText().toString();
                 double price = Double.parseDouble(product.priceText.getText().toString());
                 int quantity = product.actualQuantity;
-                products.add(new Product(i,name,price,quantity));
+                products.add(new Product(product.getAdapterPosition(),name,price,quantity));
             }
         }
         return products;

@@ -1,6 +1,5 @@
 package com.code.red.playvendas.activities;
 
-
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -64,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 if(stringRequest == null){
                     StringRequest stringRequest = getRequest(url, token.getText().toString());
                     queue.add(stringRequest);
-                    //createToken("[{id:0}]","Token 0a056e99fd9310bab4a99fcc4a8d227db01a91c6");
-                }
+                 }
             }
         });
     }

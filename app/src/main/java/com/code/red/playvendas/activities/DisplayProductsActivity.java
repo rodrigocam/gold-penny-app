@@ -62,6 +62,8 @@ public class DisplayProductsActivity extends AppCompatActivity {
 
         /* We need this to open the xml template from res/raw folder */
         this.xmlFile = getResources().openRawResource(R.raw.print_template);
+        this.escPosDriver = new EscPosDriver(this.xmlFile);
+        /* Creating a esc/pos driver with the given xmlfile */
 
         RecyclerView productList = (RecyclerView) findViewById(R.id.product_list);
 
@@ -88,9 +90,6 @@ public class DisplayProductsActivity extends AppCompatActivity {
     }
 
     private void print() {
-        /* Creating a esc/pos driver with the given xmlfile */
-        this.escPosDriver = new EscPosDriver(this.xmlFile);
-
         ArrayList<Product> selectedProducts = getSelectedProducts();
 
         for(Product product:selectedProducts){

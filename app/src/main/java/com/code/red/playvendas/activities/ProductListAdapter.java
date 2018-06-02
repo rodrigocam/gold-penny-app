@@ -25,6 +25,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         TextView nameText;
         TextView priceText;
         TextView quantityText;
+        TextView subtotal;
         Button plus;
         Button minus;
         int actualQuantity = 0;
@@ -33,9 +34,23 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             super(itemView);
         }
 
-        public void modifyText(int quantity){
+        public void updateQuantity(int quantity){
             actualQuantity += quantity;
-            quantityText.setText(actualQuantity + "");
+            if(actualQuantity<0){
+                actualQuantity-=quantity;
+            }else{
+                quantityText.setText(actualQuantity + "");
+                updateSubtotal();
+            }
+        }
+        private void updateSubtotal(){
+            Double price = Double.parseDouble(priceText.getText().toString());
+            price = price * actualQuantity;
+            if(price != 0){
+                subtotal.setText(price + "");
+            }else{
+                subtotal.setText("");
+            }
         }
     }
 
@@ -51,6 +66,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         holder.nameText = (TextView) list_item.findViewById(R.id.name);
         holder.quantityText = (TextView) list_item.findViewById(R.id.quantity);
         holder.priceText = (TextView) list_item.findViewById(R.id.price);
+        holder.subtotal = (TextView) list_item.findViewById(R.id.subtotal);
         holder.plus = (Button) list_item.findViewById(R.id.plus);
         holder.minus = (Button) list_item.findViewById(R.id.minus);
         holder.actualQuantity = 0;
@@ -58,20 +74,21 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         holder.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.modifyText(1);
+                holder.updateQuantity(1);
             }
         });
 
         holder.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.modifyText(-1);
+                holder.updateQuantity(-1);
             }
         });
 
         holder.nameText.setText("");
         holder.priceText.setText("");
         holder.quantityText.setText("0");
+        holder.subtotal.setText("");
 
         return holder;
     }

@@ -1,4 +1,4 @@
-package com.code.red.playvendas.viewmodel;
+package com.code.red.playvendas.roomConfiguration.editable;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
@@ -29,7 +29,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    PlayDatabase provideDatabase(Application application) {
+    public PlayDatabase provideDatabase(Application application) {
         return Room.databaseBuilder(application,
                 PlayDatabase.class, "PlayDatabase.db")
                 .build();
@@ -37,31 +37,32 @@ public class AppModule {
 
     @Provides
     @Singleton
-    TokenDao provideTokenDao(PlayDatabase database) {
+    public TokenDao provideTokenDao(PlayDatabase database) {
         return database.tokenDao();
     }
+
     @Provides
     @Singleton
-    ProductDao provideProductDao(PlayDatabase database) {
+    public ProductDao provideProductDao(PlayDatabase database) {
         return database.productDao();
     }
     // --- REPOSITORY INJECTION ---
 
     @Provides
-    Executor provideExecutor() {
+    public Executor provideExecutor() {
         return Executors.newSingleThreadExecutor();
     }
 
     @Provides
     @Singleton
-    TokenRepository provideTokenRepository(Webservice webservice, TokenDao tokenDao, Executor executor) {
+    public TokenRepository provideTokenRepository(Webservice webservice, TokenDao tokenDao, Executor executor) {
         return new TokenRepository(tokenDao, executor);
     }
 
     @Provides
     @Singleton
-    ProductRepository provideProductRepository(Webservice webservice, ProductDao productDao, Executor executor) {
-        return new ProductRepository(webservice,productDao, executor);
+    public ProductRepository provideProductRepository(Webservice webservice, ProductDao productDao, Executor executor) {
+        return new ProductRepository(webservice, productDao, executor);
     }
 
     // --- NETWORK INJECTION ---
@@ -69,10 +70,12 @@ public class AppModule {
     private static String BASE_URL = "https://api.github.com/";
 
     @Provides
-    Gson provideGson() { return new GsonBuilder().create(); }
+    public Gson provideGson() {
+        return new GsonBuilder().create();
+    }
 
     @Provides
-    Retrofit provideRetrofit(Gson gson) {
+    public Retrofit provideRetrofit(Gson gson) {
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .baseUrl(BASE_URL)
@@ -82,7 +85,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    Webservice provideApiWebservice(Retrofit restAdapter) {
+    public Webservice provideApiWebservice(Retrofit restAdapter) {
         return restAdapter.create(Webservice.class);
     }
 }

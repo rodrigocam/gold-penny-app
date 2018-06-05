@@ -23,31 +23,31 @@ public class BluetoothService {
 
     /* Bluetooth */
     private BluetoothAdapter bluetoothAdapter = null;
-    private BluetoothDevice bluetoohtDevice = null;
+    private BluetoothDevice bluetoothDevice = null;
     private BluetoothSocket bluetoothSocket = null;
 
     /* Output to send print commands */
     OutputStream socketOutput = null;
 
 
-    public BluetoothService(){
+    public BluetoothService() {
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
-    public void startConnection() throws BluetoothConnectionException{
-        if(!CONNECTED){
+    public void startConnection() throws BluetoothConnectionException {
+        if (!CONNECTED) {
             // Disables discovery for faster connection
             bluetoothAdapter.cancelDiscovery();
 
             try {
-                bluetoohtDevice = getPrinter();
+                bluetoothDevice = getPrinter();
 
-                Method m = bluetoohtDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
-                bluetoothSocket = (BluetoothSocket) m.invoke(bluetoohtDevice, 1);
+                Method m = bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+                bluetoothSocket = (BluetoothSocket) m.invoke(bluetoothDevice, 1);
                 bluetoothSocket.connect();
                 socketOutput = bluetoothSocket.getOutputStream();
                 CONNECTED = true;
-            }catch(Exception e){
+            } catch (Exception e) {
                 Log.e(LOG_TAG, "BLUETOOTH CONNECTION FAILED!!");
                 e.printStackTrace();
                 throw new BluetoothConnectionException();
@@ -55,12 +55,12 @@ public class BluetoothService {
         }
     }
 
-    public void closeConnection() throws BluetoothConnectionException{
-        if(CONNECTED){
-            try{
+    public void closeConnection() throws BluetoothConnectionException {
+        if (CONNECTED) {
+            try {
                 this.bluetoothSocket.close();
                 CONNECTED = false;
-            }catch(IOException e){
+            } catch (IOException e) {
                 Log.e(LOG_TAG, "FAILED TO CLOSE CONNECTION!");
                 throw new BluetoothConnectionException();
             }
@@ -68,33 +68,33 @@ public class BluetoothService {
     }
 
     public void sendByteData(byte[] data) throws SendDataException {
-        if(CONNECTED){
+        if (CONNECTED) {
             try {
                 this.socketOutput.write(data);
                 this.socketOutput.flush();
-            }catch(IOException e){
+            } catch (IOException e) {
                 Log.e(LOG_TAG, "FAILED TO SEND DATA!");
                 e.printStackTrace();
                 throw new SendDataException();
             }
-        }else{
+        } else {
             Log.e(LOG_TAG, "CAN'T SEND DATA, DEVICE NOT CONNECTED!");
             throw new SendDataException();
         }
     }
 
-    private BluetoothDevice getPrinter() throws FindPrinterException{
+    private BluetoothDevice getPrinter() throws FindPrinterException {
 
         BluetoothDevice printer = null;
         Set<BluetoothDevice> pairedDevices = this.bluetoothAdapter.getBondedDevices();
 
-        for(BluetoothDevice device : pairedDevices){
-            if(device.getName().toLowerCase().contains("printer")){
+        for (BluetoothDevice device : pairedDevices) {
+            if (device.getName().toLowerCase().contains("printer")) {
                 Log.d(LOG_TAG, device.getName() + " found");
                 printer = device;
             }
         }
-        if(printer == null){
+        if (printer == null) {
             throw new FindPrinterException();
         }
         return printer;

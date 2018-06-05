@@ -2,8 +2,8 @@ package com.code.red.playvendas.activities;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -49,7 +49,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
     private EscPosDriver escPosDriver;
 
     /* Data that will be printed on thermal printer */
-    private byte [] printData;
+    private byte[] printData;
 
     /* XML Template with the print template */
     private InputStream xmlFile;
@@ -83,12 +83,12 @@ public class DisplayProductsActivity extends AppCompatActivity {
 
         tokenViewModel = ViewModelProviders.of(this, viewModelFactory).get(TokenViewModel.class);
         tokenViewModel.init();
-        productViewModel = ViewModelProviders.of(this,viewModelFactory).get(ProductViewModel.class);
+        productViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProductViewModel.class);
 
         setUpPrintButton();
         tokenViewModel.getToken().observe(this, token -> {
             productViewModel.init(token);
-            productViewModel.getProducts().observe(this, products->{
+            productViewModel.getProducts().observe(this, products -> {
                 refreshProductList(productList, products);
             });
         });
@@ -98,8 +98,8 @@ public class DisplayProductsActivity extends AppCompatActivity {
     private void updateTotalPrice() {
         double totalPrice = 0;
         double price;
-        for(ProductListAdapter.ViewHolder product: getProductListHolders()){
-            if(product.subtotal.getText().toString() != ""){
+        for (ProductListAdapter.ViewHolder product : getProductListHolders()) {
+            if (product.subtotal.getText().toString() != "") {
                 price = Double.parseDouble(product.subtotal.getText().toString());
                 totalPrice += price;
             }
@@ -114,22 +114,22 @@ public class DisplayProductsActivity extends AppCompatActivity {
     private void print() {
         ArrayList<Product> selectedProducts = getSelectedProducts();
 
-        for(Product product:selectedProducts){
+        for (Product product : selectedProducts) {
             this.escPosDriver.setLineText("product", product.getName());
-            this.escPosDriver.setLineText("price",  "R$ "+ product.getPrice() +"0");
-            this.escPosDriver.setLineText("date", "Data: "+ new Date().toString());
+            this.escPosDriver.setLineText("price", "R$ " + product.getPrice() + "0");
+            this.escPosDriver.setLineText("date", "Data: " + new Date().toString());
 
-            for(int i = 0; i < product.getQuantity(); i++){
+            for (int i = 0; i < product.getQuantity(); i++) {
                 sendProductToPrint(this.escPosDriver.xmlToEsc());
             }
         }
     }
 
-    private ArrayList<ProductListAdapter.ViewHolder> getProductListHolders(){
+    private ArrayList<ProductListAdapter.ViewHolder> getProductListHolders() {
         RecyclerView productList = (RecyclerView) findViewById(R.id.product_list);
         ArrayList<ProductListAdapter.ViewHolder> listItems = new ArrayList<ProductListAdapter.ViewHolder>();
         ProductListAdapter.ViewHolder product = null;
-        for(int i=0; i< productList.getChildCount();i++) {
+        for (int i = 0; i < productList.getChildCount(); i++) {
             View child = productList.getChildAt(i);
             product = (ProductListAdapter.ViewHolder) productList.getChildViewHolder(child);
             listItems.add(product);
@@ -137,33 +137,33 @@ public class DisplayProductsActivity extends AppCompatActivity {
         return listItems;
     }
 
-    private ArrayList<Product> getSelectedProducts(){
+    private ArrayList<Product> getSelectedProducts() {
         ArrayList<Product> products = new ArrayList<Product>();
-        for(ProductListAdapter.ViewHolder product: getProductListHolders()){
+        for (ProductListAdapter.ViewHolder product : getProductListHolders()) {
             Log.d("Product", product.toString());
-            if(product.actualQuantity > 0){
+            if (product.actualQuantity > 0) {
                 String name = product.nameText.getText().toString();
                 double price = Double.parseDouble(product.priceText.getText().toString());
                 int quantity = product.actualQuantity;
-                products.add(new Product(product.getAdapterPosition(),name,price,quantity));
+                products.add(new Product(product.getAdapterPosition(), name, price, quantity));
             }
         }
         return products;
     }
 
-    private void sendProductToPrint(byte[] productData){
-        try{
+    private void sendProductToPrint(byte[] productData) {
+        try {
             this.btService.sendByteData(productData);
-        }catch(SendDataException e){
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(),
-                            "Failed to print",
-                            Toast.LENGTH_SHORT);
-                }
+        } catch (SendDataException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(),
+                    "Failed to print",
+                    Toast.LENGTH_SHORT);
+        }
     }
 
-    private void setUpPrintButton(){
-    this.printBtn = findViewById(R.id.printBtn);
+    private void setUpPrintButton() {
+        this.printBtn = findViewById(R.id.printBtn);
         this.printBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,7 +172,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
         });
     }
 
-    private void configureDagger(){
+    private void configureDagger() {
         AndroidInjection.inject(this);
     }
 
@@ -181,7 +181,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
         super.onStart();
         try {
             this.btService.startConnection();
-        }catch(BluetoothConnectionException e){
+        } catch (BluetoothConnectionException e) {
             /* alert dialog saying that
             bluetooth connection failed and return
             to previous activity */
@@ -191,9 +191,9 @@ public class DisplayProductsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try{
+        try {
             this.btService.closeConnection();
-        }catch(BluetoothConnectionException e){
+        } catch (BluetoothConnectionException e) {
             Toast.makeText(this, "FAILED TO CLOSE BLUETOOTH CONNECTION", Toast.LENGTH_SHORT);
         }
     }

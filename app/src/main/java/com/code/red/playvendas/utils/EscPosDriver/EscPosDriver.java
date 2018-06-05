@@ -1,8 +1,5 @@
 package com.code.red.playvendas.utils.EscPosDriver;
 
-import android.renderscript.ScriptGroup;
-import android.util.Log;
-
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Document;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Line;
 import com.code.red.playvendas.utils.EscPosDriver.EscPosXmlParser.Parser;
@@ -23,7 +20,7 @@ public class EscPosDriver {
     private List<Line> lines;
     private InputStream xmlFile;
 
-    public EscPosDriver(InputStream xmlFile){
+    public EscPosDriver(InputStream xmlFile) {
         this.byteData = new ByteArrayOutputStream();
         this.xStream = new XStream(new DomDriver());
         this.parser = new Parser();
@@ -33,16 +30,16 @@ public class EscPosDriver {
         this.lines = this.doc.lines;
     }
 
-    public void setXmlFile(InputStream xmlFile){
+    public void setXmlFile(InputStream xmlFile) {
         this.xmlFile = xmlFile;
 
         this.doc = this.parser.unmarshall(this.xmlFile);
         this.lines = this.doc.lines;
     }
 
-    public void setLineText(String lineId, String text){
+    public void setLineText(String lineId, String text) {
         int index = 0;
-        for(Line line: this.lines) {
+        for (Line line : this.lines) {
 
             if (line.getId().equals(lineId)) {
                 line.setText(text);
@@ -52,31 +49,31 @@ public class EscPosDriver {
         }
     }
 
-    public byte[] xmlToEsc(){
+    public byte[] xmlToEsc() {
 
         this.byteData.reset();
 
-        for(Line line: this.lines){
+        for (Line line : this.lines) {
             writeLine(line);
         }
 
-        byte [] tmp = this.byteData.toByteArray();
+        byte[] tmp = this.byteData.toByteArray();
 
         return tmp;
     }
 
-    public byte[] customXmlToEsc(InputStream xmlFile, String lineId, String text){
+    public byte[] customXmlToEsc(InputStream xmlFile, String lineId, String text) {
         setLineText(lineId, text);
 
-        for(Line line: this.lines){
+        for (Line line : this.lines) {
             writeLine(line);
         }
 
-        byte [] tmp = this.byteData.toByteArray();
+        byte[] tmp = this.byteData.toByteArray();
 
         try {
             this.byteData.flush();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -84,79 +81,103 @@ public class EscPosDriver {
     }
 
 
-    private void writeLine(Line line){
+    private void writeLine(Line line) {
         // ESC @
         byteData.write(0x1B);
         byteData.write(0x40);
 
-        if(line.getFont() != null) {
+        if (line.getFont() != null) {
             writeFont(line.getFont());
         }
-        if(line.getAlign() != null){
+        if (line.getAlign() != null) {
             writeAlign(line.getAlign());
         }
-        if(line.getText() != null){
+        if (line.getText() != null) {
             writeText(line.getText());
 
             // LF
             //byteData.write(0xA);
         }
-        if(line.getFeed() != null){
+        if (line.getFeed() != null) {
             writeFeed(line.getFeed());
         }
-        if(line.getCut() != null) {
+        if (line.getCut() != null) {
             writeCut(line.getCut());
         }
     }
 
-    private void writeText(String text){
-        try{
+    private void writeText(String text) {
+        try {
             byteData.write(text.getBytes());
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void writeAlign(String align){
+    private void writeAlign(String align) {
         System.out.println("ALIGNMENT" + align);
         int code;
 
         byteData.write(0x1B);
         byteData.write(0x61);
 
-        switch(align.toLowerCase()){
-            case "left": code = 0x00;break;
-            case "center": code = 0x01;break;
-            case "right": code = 0x02;break;
-            default: code = 0x00;
+        switch (align.toLowerCase()) {
+            case "left":
+                code = 0x00;
+                break;
+            case "center":
+                code = 0x01;
+                break;
+            case "right":
+                code = 0x02;
+                break;
+            default:
+                code = 0x00;
         }
 
         byteData.write(code);
     }
 
-    private void writeFont(String font){
+    private void writeFont(String font) {
 
         int code;
 
         byteData.write(0x1B);
         byteData.write(0x21);
 
-        switch(font.toLowerCase()){
-            case "regular": code = 0x00;break;
-            case "dh": code = 0x10;break;
-            case "dw": code = 0x20;break;
-            case "dwdh": code = 0x30;break;
-            case "emphasized": code = 0x08;break;
-            case "dh_emphasized": code = 0x18;break;
-            case "dw_emphasized": code = 0x28;break;
-            case "dwdh_emphasized": code = 0x38;break;
-            default: code = 0x00;
+        switch (font.toLowerCase()) {
+            case "regular":
+                code = 0x00;
+                break;
+            case "dh":
+                code = 0x10;
+                break;
+            case "dw":
+                code = 0x20;
+                break;
+            case "dwdh":
+                code = 0x30;
+                break;
+            case "emphasized":
+                code = 0x08;
+                break;
+            case "dh_emphasized":
+                code = 0x18;
+                break;
+            case "dw_emphasized":
+                code = 0x28;
+                break;
+            case "dwdh_emphasized":
+                code = 0x38;
+                break;
+            default:
+                code = 0x00;
         }
 
         byteData.write(code);
     }
 
-    private void writeCut(String cut){
+    private void writeCut(String cut) {
 
         int code;
 
@@ -164,19 +185,24 @@ public class EscPosDriver {
         byteData.write(0x1D);
         byteData.write(0x56);
 
-        switch(cut.toLowerCase()){
-            case "full": code = 0x00;break;
-            case "part": code = 0x01;break;
-            default: code = 0x00;
+        switch (cut.toLowerCase()) {
+            case "full":
+                code = 0x00;
+                break;
+            case "part":
+                code = 0x01;
+                break;
+            default:
+                code = 0x00;
         }
 
         // m function
         byteData.write(code);
     }
 
-    private void writeFeed(Integer feed){
+    private void writeFeed(Integer feed) {
 
-        if(feed >= 0){
+        if (feed >= 0) {
             // ESC d
             byteData.write(0x1B);
             byteData.write(0x64);

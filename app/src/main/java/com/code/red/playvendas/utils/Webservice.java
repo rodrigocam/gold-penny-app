@@ -1,14 +1,12 @@
 package com.code.red.playvendas.utils;
 
 import com.code.red.playvendas.model.Product;
-import com.code.red.playvendas.model.Token;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Path;
 
 public interface Webservice {
     /**

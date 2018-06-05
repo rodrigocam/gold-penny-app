@@ -1,4 +1,4 @@
-package com.code.red.playvendas.viewmodel;
+package com.code.red.playvendas.roomConfiguration.fixed;
 
 import android.arch.lifecycle.ViewModel;
 

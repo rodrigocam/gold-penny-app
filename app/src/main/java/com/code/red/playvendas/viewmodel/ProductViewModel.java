@@ -17,12 +17,12 @@ public class ProductViewModel extends ViewModel {
     private ProductRepository productRepository;
 
     @Inject
-    public ProductViewModel(ProductRepository productRepository){
+    public ProductViewModel(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     public void init(Token token) {
-        if(this.products == null){
+        if (this.products == null) {
             products = productRepository.getProducts(token);
         }
     }

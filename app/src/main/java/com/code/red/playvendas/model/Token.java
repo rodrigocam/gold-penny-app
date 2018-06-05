@@ -10,7 +10,9 @@ public class Token {
 
     private String token;
 
-    public Token(){ super();}
+    public Token() {
+        super();
+    }
 
     public int getId() {
         return id;

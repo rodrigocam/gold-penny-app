@@ -16,12 +16,12 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     private LayoutInflater _inflater;
     private Product[] _products;
 
-    public ProductListAdapter(Context context, Product... products){
+    public ProductListAdapter(Context context, Product... products) {
         _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         _products = products;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameText;
         TextView priceText;
         TextView quantityText;
@@ -34,21 +34,22 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             super(itemView);
         }
 
-        public void updateQuantity(int quantity){
+        public void updateQuantity(int quantity) {
             actualQuantity += quantity;
-            if(actualQuantity<0){
-                actualQuantity-=quantity;
-            }else{
+            if (actualQuantity < 0) {
+                actualQuantity -= quantity;
+            } else {
                 quantityText.setText(actualQuantity + "");
                 updateSubtotal();
             }
         }
-        private void updateSubtotal(){
+
+        private void updateSubtotal() {
             Double price = Double.parseDouble(priceText.getText().toString());
             price = price * actualQuantity;
-            if(price != 0){
+            if (price != 0) {
                 subtotal.setText(price + "");
-            }else{
+            } else {
                 subtotal.setText("");
             }
         }

@@ -1,8 +1,10 @@
-package com.code.red.playvendas.viewmodel;
+package com.code.red.playvendas;
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+
+import com.code.red.playvendas.roomConfiguration.fixed.DaggerAppComponent;
 
 import javax.inject.Inject;
 
@@ -12,7 +14,7 @@ import dagger.android.HasActivityInjector;
 public class App extends Application implements HasActivityInjector {
 
     @Inject
-    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+    public DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
 
     public static Context context;
 
@@ -25,12 +27,10 @@ public class App extends Application implements HasActivityInjector {
 
     @Override
     public DispatchingAndroidInjector<Activity> activityInjector() {
-        return dispatchingAndroidInjector;
+        return this.dispatchingAndroidInjector;
     }
 
-    // ---
-
-    private void initDagger(){
+    private void initDagger() {
         DaggerAppComponent.builder().application(this).build().inject(this);
     }
 }

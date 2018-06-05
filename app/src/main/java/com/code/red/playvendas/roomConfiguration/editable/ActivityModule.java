@@ -1,4 +1,4 @@
-package com.code.red.playvendas.viewmodel;
+package com.code.red.playvendas.roomConfiguration.editable;
 
 import com.code.red.playvendas.activities.DisplayProductsActivity;
 import com.code.red.playvendas.activities.MainActivity;
@@ -10,6 +10,7 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract MainActivity contributeMainActivity();
+
     @ContributesAndroidInjector
     abstract DisplayProductsActivity contributeDisplayProductsActivity();
 }

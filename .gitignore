@@ -72,3 +72,5 @@ freeline_project_description.json
 mysql/
 
 app/schemas/com\.code\.red\.playvendas\.database\.playdb/
+
+app/schemas/com\.code\.red\.playvendas\.database\.PlayDatabase/

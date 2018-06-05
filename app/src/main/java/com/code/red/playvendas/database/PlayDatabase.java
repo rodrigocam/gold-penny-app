@@ -8,8 +8,9 @@ import com.code.red.playvendas.dao.TokenDao;
 import com.code.red.playvendas.model.Product;
 import com.code.red.playvendas.model.Token;
 
-@Database(entities={Product.class, Token.class}, version=1)
+@Database(entities = {Product.class, Token.class}, version = 1)
 public abstract class PlayDatabase extends RoomDatabase {
     public abstract ProductDao productDao();
+
     public abstract TokenDao tokenDao();
 }

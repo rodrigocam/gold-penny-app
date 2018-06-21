@@ -41,7 +41,8 @@ public class ProductRepository {
 
     private void refreshProducts(Token token) {
         executor.execute(() -> {
-            if (productDao.getProductCount() == 0) {
+            if(true){
+            //if (productDao.getProductCount() == 0) {
                 // refresh the data
 
                 Response response = null;
@@ -53,11 +54,15 @@ public class ProductRepository {
                 }
                 List<Product> products = null;
                 try{
+                    Log.d("ResponseBody", response.body().toString());
                     products = (List<Product>) response.body();
                 }catch (Exception e){
                     Log.d("ProductRepository", "Not today, buddy.");
                 }
                 for(Product product : products){
+                    Log.d("ReceivedProduct",product.toString());
+                    product.setApiId(product.getId());
+                    Log.d("ReceivedProduct",product.toString());
                     executor.execute(()->{
                         productDao.save(product);
                     });

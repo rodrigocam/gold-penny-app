@@ -1,8 +1,10 @@
 package com.code.red.playvendas.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +14,23 @@ import android.widget.TextView;
 import com.code.red.playvendas.R;
 import com.code.red.playvendas.model.Product;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.ViewHolder> {
     private LayoutInflater _inflater;
-    private Product[] _products;
+    private ArrayList<Product> _products;
+    private DisplayProductsActivity activity;
 
-    public ProductListAdapter(Context context, Product... products) {
+    public ProductListAdapter(DisplayProductsActivity activity,Context context, List<Product> products) {
         _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        _products = products;
+        _products = new ArrayList<Product>(products);
+        Log.d("ProductListAdapter", products.toString());
+        this.activity = activity;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        DisplayProductsActivity displayActivity;
         TextView nameText;
         TextView priceText;
         TextView quantityText;
@@ -30,8 +39,9 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         Button minus;
         int actualQuantity = 0;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(DisplayProductsActivity activity,View itemView) {
             super(itemView);
+            this.displayActivity = activity;
         }
 
         public void updateQuantity(int quantity) {
@@ -45,13 +55,14 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         }
 
         private void updateSubtotal() {
-            Double price = Double.parseDouble(priceText.getText().toString());
+            Double price = Double.parseDouble(priceText.getText().toString().replace("R$", ""));
             price = price * actualQuantity;
             if (price != 0) {
                 subtotal.setText(price + "");
             } else {
                 subtotal.setText("");
             }
+            displayActivity.updateTotalPrice();
         }
     }
 
@@ -63,7 +74,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
         View list_item = _inflater.inflate(R.layout.list_item, parent, false);
 
-        holder = new ViewHolder(list_item);
+        holder = new ViewHolder(activity,list_item);
         holder.nameText = (TextView) list_item.findViewById(R.id.name);
         holder.quantityText = (TextView) list_item.findViewById(R.id.quantity);
         holder.priceText = (TextView) list_item.findViewById(R.id.price);
@@ -97,15 +108,21 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.nameText.setText(_products[position].getName());
-        holder.priceText.setText(_products[position].getPrice() + "");
+        holder.nameText.setText(_products.get(position).getName());
+        holder.priceText.setText("R$"+_products.get(position).getPrice());
         holder.quantityText.setText(holder.actualQuantity + "");
-
     }
 
     @Override
     public int getItemCount() {
-        return _products.length;
+        return _products.size();
+    }
+
+    public Product getProduct(int position, RecyclerView productList){
+            View child = productList.getChildAt(position);
+            ViewHolder productViewHolder = (ViewHolder) productList.getChildViewHolder(child);
+            _products.get(position).setQuantity(productViewHolder.actualQuantity);
+            return _products.get(position);
     }
 }
 

@@ -8,10 +8,12 @@ import android.arch.persistence.room.PrimaryKey;
 public class Product {
     @PrimaryKey
     private int id;
+
+    private int apiId;
+
     private String name;
     private double price;
     private int quantity;
-
     public Product() {
         super();
     }
@@ -24,10 +26,13 @@ public class Product {
         this.quantity = quantity;
     }
 
+    @Override
+    public String toString(){
+        return  id + " "+ name + " " + price + " API_id:" + apiId;
+    }
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -54,5 +59,13 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getApiId() {
+        return apiId;
+    }
+
+    public void setApiId(int api_id) {
+        this.apiId = api_id;
     }
 }

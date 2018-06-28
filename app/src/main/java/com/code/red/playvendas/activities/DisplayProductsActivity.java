@@ -137,7 +137,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ArrayList<Product> products = getSelectedProducts();
-                //printerManager.print(products);
+                printerManager.print(products);
                 refreshProducts(productList);
                 Log.d("RODRIGOLIXO", products.toString());
                 StringRequest productsRequest = postProductsRequest(v.getContext(),products);

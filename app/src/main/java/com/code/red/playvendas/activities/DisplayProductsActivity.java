@@ -166,7 +166,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
     }
 
     public StringRequest postProductsRequest(Context context, ArrayList<Product> products) {
-        String url = "http://206.189.123.66/api/v1/products/sell/";
+        String url = "http://159.89.140.211/api/v1/products/sell/";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override

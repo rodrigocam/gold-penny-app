@@ -14,7 +14,7 @@ public interface Webservice {
      * @Path("product") annotation on the productId parameter marks it as a
      * replacement for the {user} placeholder in the @GET path
      */
-    @GET("http://206.189.123.66/api/v1/products/")
+    @GET("http://159.89.140.211/api/v1/products/")
     Call<List<Product>> getProducts(@Header("Authorization") String token);
 
 

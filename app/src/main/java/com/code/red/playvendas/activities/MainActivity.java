@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public StringRequest getTokenRequest(Context context, String username, String password) {
-        String url = "http://206.189.123.66/get-token/";
+        String url = "http://159.89.140.211/get-token/";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override

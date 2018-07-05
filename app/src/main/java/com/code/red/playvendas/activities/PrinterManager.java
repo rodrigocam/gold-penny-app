@@ -9,7 +9,8 @@ import com.code.red.playvendas.bluetooth.BluetoothService;
 import com.code.red.playvendas.exceptions.BluetoothConnectionException;
 import com.code.red.playvendas.exceptions.SendDataException;
 import com.code.red.playvendas.model.Product;
-import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
+
+import com.redcode.escposxml.EscPosDriver;
 
 import java.io.InputStream;
 import java.util.ArrayList;

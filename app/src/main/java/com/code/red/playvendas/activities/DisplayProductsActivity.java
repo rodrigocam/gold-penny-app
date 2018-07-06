@@ -109,8 +109,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
      * @return List of Products and quantities selected
      */
     private ArrayList<Product> getProductListHolders() {
-        ArrayList<Product> products = new ArrayList<Product>();
-        ProductListAdapter.ViewHolder product = null;
+        ArrayList<Product> products = new ArrayList<>();
         ProductListAdapter adapter = (ProductListAdapter) productList.getAdapter();
         for (int i = 0; i < productList.getChildCount(); i++) {
             products.add(adapter.getProduct(i, productList));
@@ -125,7 +124,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
      * @return ArrayList of products selected by the user;
      */
     private ArrayList<Product> getSelectedProducts() {
-        ArrayList<Product> products = new ArrayList<Product>();
+        ArrayList<Product> products = new ArrayList<>();
 
         for (Product product : getProductListHolders()) {
             Log.d("RecyclerView", "Product: " + product.toString());

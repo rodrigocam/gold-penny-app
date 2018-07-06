@@ -26,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.code.red.playvendas.R;
 import com.code.red.playvendas.model.Token;
+import com.code.red.playvendas.utils.RequestBuilder;
 import com.code.red.playvendas.viewmodel.TokenViewModel;
 
 import org.json.JSONArray;
@@ -63,75 +64,23 @@ public class MainActivity extends AppCompatActivity {
         tokenViewModel = ViewModelProviders.of(this, viewModelFactory).get(TokenViewModel.class);
 
 
-        RequestQueue queue = Volley.newRequestQueue(this);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (stringRequest == null) {
-                    StringRequest stringRequest = getTokenRequest(v.getContext(), username.getText().toString(), password.getText().toString());
-                    queue.add(stringRequest);
+                    requestToken();
                 }
             }
         });
     }
 
-    public StringRequest getTokenRequest(Context context, String username, String password) {
-        String url = "http://159.89.140.211/get-token/";
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Response", response);
-                        try{
-                            JSONObject responseJson = new JSONObject(response);
-                            String token = responseJson.getString("token");
-                            createToken(token);
-                        }catch(JSONException e){
-                            e.printStackTrace();
-                            Log.e("Response", "get-token api response was not a json");
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-
-                    public void onErrorResponse(VolleyError error) {
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            Toast.makeText(context,
-                                    "No conection, Timeout",
-                                    Toast.LENGTH_LONG).show();
-                        } else if (error instanceof AuthFailureError) {
-                            Toast.makeText(context,
-                                    "Usuário ou senha inválidos.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof ServerError) {
-                            Toast.makeText(context,
-                                    "Server Error",
-                                    Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof NetworkError) {
-                            Toast.makeText(context,
-                                    "Network error",
-                                    Toast.LENGTH_SHORT).show();
-                        } else if (error instanceof ParseError) {
-                            Toast.makeText(context,
-                                    "Parse error",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("username", username);
-                params.put("password", password);
-                return params;
-            }
-        };
-        return postRequest;
+    public void requestToken(){
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = RequestBuilder.getTokenRequest(this, username.getText().toString(), password.getText().toString());
+        queue.add(stringRequest);
     }
-
-    private void createToken(String token) {
+    public void createToken(String token) {
             try {
                 Token newToken = new Token();
                 newToken.setToken(token);

@@ -2,7 +2,6 @@ package com.code.red.playvendas.activities;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,34 +10,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.code.red.playvendas.R;
 import com.code.red.playvendas.model.Product;
-import com.code.red.playvendas.model.Token;
+import com.code.red.playvendas.utils.RequestBuilder;
 import com.code.red.playvendas.viewmodel.ProductViewModel;
 import com.code.red.playvendas.viewmodel.TokenViewModel;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
-import dagger.BindsOptionalOf;
 import dagger.android.AndroidInjection;
 
 public class DisplayProductsActivity extends AppCompatActivity {
@@ -46,103 +31,135 @@ public class DisplayProductsActivity extends AppCompatActivity {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    // ViewModels to access information on DB/API
     private ProductViewModel productViewModel = null;
     private TokenViewModel tokenViewModel = null;
 
+    // Managers
+    private RequestBuilder requestBuilder;
+    private PrinterManager printerManager;
+
+    // Layout items
+    private TextView total;
     private Button printBtn;
     private RecyclerView productList;
-    private TextView total;
-    private PrinterManager printerManager;
-    private Token token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_products);
-        total = (TextView) findViewById(R.id.total);
 
+        //Activate dependency injection
         this.configureDagger();
 
+        //Printer Manager uses bluetooth and print products.
         printerManager = new PrinterManager(this);
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-
+        total = (TextView) findViewById(R.id.total);
         productList = (RecyclerView) findViewById(R.id.product_list);
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         productList.setLayoutManager(manager);
 
+        // Get View Models to access user token and retrieve products on the API
         tokenViewModel = ViewModelProviders.of(this, viewModelFactory).get(TokenViewModel.class);
         tokenViewModel.init();
         productViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProductViewModel.class);
 
-        setUpPrintButton(queue);
+        // Define print button action on click to print
+        setUpPrintButton();
+
+        // Initialize product view model and products using user token
         tokenViewModel.getToken().observe(this, token -> {
-            this.token = token;
+            this.requestBuilder = new RequestBuilder(token);
             productViewModel.init(token);
-            refreshProducts(productList);
+            refreshProducts();
         });
     }
 
-    private void refreshProducts(RecyclerView productList) {
+    /**
+     * Refresh Products on Recycler view list based on products from view model.
+     */
+    private void refreshProducts() {
         productViewModel.getProducts().observe(this, products -> {
-            refreshProductList(productList, products);
+            productList.setAdapter(new ProductListAdapter(this, products));
             updateTotalPrice();
         });
     }
 
+    /**
+     * Update the total price shown on the screen
+     * by adding all products prices on Recycler View adapter viewholders
+     */
     public void updateTotalPrice() {
         double totalPrice = 0;
         double price;
         for (Product product : getProductListHolders()) {
-            if (product.getQuantity() >0 ) {
+            if (product.getQuantity() > 0) {
                 totalPrice += product.getPrice() * product.getQuantity();
             }
         }
         this.total.setText("R$ " + totalPrice);
     }
 
-    private void refreshProductList(RecyclerView productList, List<Product> products) {
-        Log.d("Teste", products.toString());
-        productList.setAdapter(new ProductListAdapter(this, this, products));
-    }
-
-
+    /**
+     * Retrieve a ArrayList of Product using RecyclerView adapter
+     * to get viewHolders updated data.
+     *
+     * @return List of Products and quantities selected
+     */
     private ArrayList<Product> getProductListHolders() {
         ArrayList<Product> products = new ArrayList<Product>();
         ProductListAdapter.ViewHolder product = null;
         ProductListAdapter adapter = (ProductListAdapter) productList.getAdapter();
         for (int i = 0; i < productList.getChildCount(); i++) {
-            products.add(adapter.getProduct(i,productList));
+            products.add(adapter.getProduct(i, productList));
         }
         return products;
     }
 
+    /**
+     * Get products by filtering RecyclerView products where quantity > 0;
+     * These selected products can be considered a sale.
+     *
+     * @return ArrayList of products selected by the user;
+     */
     private ArrayList<Product> getSelectedProducts() {
         ArrayList<Product> products = new ArrayList<Product>();
 
         for (Product product : getProductListHolders()) {
-            Log.d("Productcu", product.toString());
+            Log.d("RecyclerView", "Product: " + product.toString());
             if (product.getQuantity() > 0) {
                 products.add(product);
             }
         }
-        Log.d("HUE#", products.toString());
+
+        Log.d("RecyclerView", "Selected Products: " + products.toString());
         return products;
     }
 
-    private void setUpPrintButton(RequestQueue queue) {
+    /**
+     * Set up button action to print selected products when clicked
+     * After being pressed a sale is completed, API is called and products need to be reseted.
+     */
+    private void setUpPrintButton() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
         this.printBtn = findViewById(R.id.printBtn);
         this.printBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Print all products in this sale.
                 ArrayList<Product> products = getSelectedProducts();
                 printerManager.print(products);
-                refreshProducts(productList);
-                Log.d("RODRIGOLIXO", products.toString());
-                StringRequest productsRequest = postProductsRequest(v.getContext(),products);
-                Log.d("RODRIGOLIXO22222", productsRequest.toString());
 
+                Log.d("Sale", "Products: " + products.toString());
+
+                // Reset all products quantity to 0
+                refreshProducts();
+
+                // Sends the sale to the API
+                StringRequest productsRequest = requestBuilder.postProductsRequest(v.getContext(), products);
                 queue.add(productsRequest);
             }
         });
@@ -163,67 +180,5 @@ public class DisplayProductsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         printerManager.destroy();
-    }
-
-    public StringRequest postProductsRequest(Context context, ArrayList<Product> products) {
-        String url = "http://159.89.140.211/api/v1/products/sell/";
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("AUSHUSA","SADISIJD");
-                        Log.d("Response", response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("ARGH", error.toString());
-                    }
-                }) {
-            @Override
-            public String getBodyContentType(){
-                return "application/json; charset=utf-8";
-            }
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                JSONArray jsonProducts = new JSONArray();
-                for(Product product: products){
-                    JSONObject productJSON = new JSONObject();
-                    Log.d("CU", product.toString());
-                    try {
-                        productJSON.put("id", product.getApiId());
-                        productJSON.put("amount", product.getQuantity());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    jsonProducts.put(productJSON);
-                }
-                JSONObject orders = new JSONObject();
-                try {
-                    orders.put("orders", jsonProducts);
-                    return (orders.toString()).getBytes("utf-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    return null;
-                } catch (JSONException e){
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("Authorization", "Token " + token.getToken());
-                params.put("Content-Type", "application/json");
-
-                Log.d("Token", token.getToken());
-                Log.d("Headers",params.toString());
-                return params;
-            }
-        };
-        return postRequest;
     }
 }

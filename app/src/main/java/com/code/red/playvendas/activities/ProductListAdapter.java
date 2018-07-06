@@ -1,6 +1,5 @@
 package com.code.red.playvendas.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -22,8 +21,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     private ArrayList<Product> _products;
     private DisplayProductsActivity activity;
 
-    public ProductListAdapter(DisplayProductsActivity activity,Context context, List<Product> products) {
-        _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public ProductListAdapter(DisplayProductsActivity activity, List<Product> products) {
+        _inflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         _products = new ArrayList<Product>(products);
         Log.d("ProductListAdapter", products.toString());
         this.activity = activity;
@@ -39,7 +38,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         Button minus;
         int actualQuantity = 0;
 
-        public ViewHolder(DisplayProductsActivity activity,View itemView) {
+        public ViewHolder(DisplayProductsActivity activity, View itemView) {
             super(itemView);
             this.displayActivity = activity;
         }
@@ -74,7 +73,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
         View list_item = _inflater.inflate(R.layout.list_item, parent, false);
 
-        holder = new ViewHolder(activity,list_item);
+        holder = new ViewHolder(activity, list_item);
         holder.nameText = (TextView) list_item.findViewById(R.id.name);
         holder.quantityText = (TextView) list_item.findViewById(R.id.quantity);
         holder.priceText = (TextView) list_item.findViewById(R.id.price);
@@ -109,7 +108,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.nameText.setText(_products.get(position).getName());
-        holder.priceText.setText("R$"+_products.get(position).getPrice());
+        holder.priceText.setText("R$" + _products.get(position).getPrice());
         holder.quantityText.setText(holder.actualQuantity + "");
     }
 
@@ -118,11 +117,11 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         return _products.size();
     }
 
-    public Product getProduct(int position, RecyclerView productList){
-            View child = productList.getChildAt(position);
-            ViewHolder productViewHolder = (ViewHolder) productList.getChildViewHolder(child);
-            _products.get(position).setQuantity(productViewHolder.actualQuantity);
-            return _products.get(position);
+    public Product getProduct(int position, RecyclerView productList) {
+        View child = productList.getChildAt(position);
+        ViewHolder productViewHolder = (ViewHolder) productList.getChildViewHolder(child);
+        _products.get(position).setQuantity(productViewHolder.actualQuantity);
+        return _products.get(position);
     }
 }
 

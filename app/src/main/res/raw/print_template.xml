@@ -1,5 +1,5 @@
-<document>
-    <line id="title" align="center" font="dwdh_emphasized" cut="part" feed="3">
+<document code-page="CP850">
+    <line id="title" align="center" font="dh_dw_emphasized" cut="part" feed="3">
         <text>Gold Penny</text>
     </line>
     <line id="product" align="center" font="dw_emphasized" cut="part" feed="1">
@@ -14,6 +14,6 @@
         </text>
     </line>
     <line id="info" align="center" font="regular" cut="part" feed="4">
-        <text>Nao e comprovante fiscal</text>
+        <text>Não é comprovante fiscal</text>
     </line>
 </document>

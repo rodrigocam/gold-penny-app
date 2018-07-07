@@ -45,12 +45,12 @@ public class PrinterManager {
         ArrayList<Product> selectedProducts = products;
 
         for (Product product : selectedProducts) {
-            this.escPosDriver.setLineText("product", product.getName());
-            this.escPosDriver.setLineText("price", "R$ " + product.getPrice() + "0");
-            this.escPosDriver.setLineText("date", "Data: " + new Date().toString());
+            this.escPosDriver.setTemplateText("product", product.getName());
+            this.escPosDriver.setTemplateText("price", "R$ " + product.getPrice() + "0");
+            this.escPosDriver.setTemplateText("date", "Data: " + new Date().toString());
 
             for (int i = 0; i < product.getQuantity(); i++) {
-                sendProductToPrint(this.escPosDriver.xmlToEsc());
+                sendProductToPrint(this.escPosDriver.getBytes());
             }
         }
     }

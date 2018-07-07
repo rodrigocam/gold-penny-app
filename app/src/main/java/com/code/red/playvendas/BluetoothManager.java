@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
+import com.redcode.escposxml.EscPosDriver;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -62,8 +62,9 @@ public class BluetoothManager {
         if(!CONNECTED){
             startConnection();
         }
-        byte [] data = escPosDriver.xmlToEsc(ctx.getResources()
-                                    .openRawResource(R.raw.template));
+        escPosDriver.setTemplate(ctx.getResources()
+                .openRawResource(R.raw.template));
+        byte [] data = escPosDriver.getBytes();
         try{
             socketOutput.write(data);
             data = null;

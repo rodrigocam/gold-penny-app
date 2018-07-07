@@ -6,7 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.code.red.playvendas.utils.EscPosDriver.EscPosDriver;
+import com.redcode.escposxml.EscPosDriver;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -82,12 +82,13 @@ public class ConnectThread extends Thread {
 
     private byte[] convertString(Context ctx, String text) {
         // TODO: Convert text into byte[]
-        EscPosDriver driver = new EscPosDriver();
-        byte[] escData = null;
+        InputStream xmlFile = ctx.getResources().openRawResource(R.raw.template);
+        EscPosDriver driver = new EscPosDriver(xmlFile);
+
+        byte[] escData = driver.getBytes();
 
         //try {
-            InputStream xmlFile = ctx.getResources().openRawResource(R.raw.template);
-            escData = driver.xmlToEsc(xmlFile);
+            //escData = driver.xmlToEsc(xmlFile);
 //        }catch(IOException e){
 //            e.printStackTrace();
 //        }

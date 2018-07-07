@@ -1,11 +1,5 @@
-<document>
-    <line id="title" align="center" font="dwdh_emphasized" cut="part" feed="1">
-        <text>RED CODE</text>
-    </line>
-    <line id="product" align="center" font="dw_emphasized" cut="part" feed="1">
-        <text>RED BULL</text>
-    </line>
-    <line id="product" align="center" font="emphasized" cut="part" feed="3">
-        <text>10.00</text>
+<document code-page="CP850">
+    <line id="title" align="center" font="dh_dw_emphasized" cut="part" feed="3">
+        <text>não éé ümano</text>
     </line>
 </document>

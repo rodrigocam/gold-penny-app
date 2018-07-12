@@ -41,6 +41,10 @@ public class PrinterManager {
 
     }
 
+    /**
+     * Transforms a sale into byte array to print using a xml template.
+     * @param products Product list from a sale
+     */
     public void print(ArrayList<Product> products) {
         ArrayList<Product> selectedProducts = products;
 
@@ -55,6 +59,10 @@ public class PrinterManager {
         }
     }
 
+    /**
+     * Send a sale to the bluetooth printer
+     * @param productData Sale data
+     */
     private void sendProductToPrint(byte[] productData) {
         try {
             this.btService.sendByteData(productData);

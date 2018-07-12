@@ -38,7 +38,7 @@
         android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textPassword|textVisiblePassword|textWebPassword"
+        android:inputType="textPassword|textWebPassword"
         app:layout_constraintEnd_toEndOf="@+id/username"
         app:layout_constraintStart_toStartOf="@+id/username"
         app:layout_constraintTop_toBottomOf="@+id/username" />

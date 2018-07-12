@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.code.red.playvendas.R;
 import com.code.red.playvendas.model.Product;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +24,17 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     public ProductListAdapter(DisplayProductsActivity activity, List<Product> products) {
         _inflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        _products = new ArrayList<Product>(products);
+        _products = createArrayListOfProducts(products);
         Log.d("ProductListAdapter", products.toString());
         this.activity = activity;
+    }
+
+    public ArrayList<Product> createArrayListOfProducts(List<Product> products) {
+        ArrayList<Product> ps = new ArrayList<>(products);
+        for(Product p: products){
+            p.setQuantity(0);
+        }
+        return ps;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -34,6 +43,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         TextView priceText;
         TextView quantityText;
         TextView subtotal;
+        Product product;
         Button plus;
         Button minus;
         int actualQuantity = 0;
@@ -51,6 +61,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                 quantityText.setText(actualQuantity + "");
                 updateSubtotal();
             }
+            product.setQuantity(actualQuantity);
+            displayActivity.updateTotalPrice();
         }
 
         private void updateSubtotal() {
@@ -61,7 +73,6 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             } else {
                 subtotal.setText("");
             }
-            displayActivity.updateTotalPrice();
         }
     }
 
@@ -110,6 +121,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         holder.nameText.setText(_products.get(position).getName());
         holder.priceText.setText("R$" + _products.get(position).getPrice());
         holder.quantityText.setText(holder.actualQuantity + "");
+        holder.product = _products.get(position);
     }
 
     @Override
@@ -117,11 +129,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         return _products.size();
     }
 
-    public Product getProduct(int position, RecyclerView productList) {
-        View child = productList.getChildAt(position);
-        ViewHolder productViewHolder = (ViewHolder) productList.getChildViewHolder(child);
-        _products.get(position).setQuantity(productViewHolder.actualQuantity);
-        return _products.get(position);
+    public ArrayList<Product> getProducts(){
+        return _products;
     }
 }
 

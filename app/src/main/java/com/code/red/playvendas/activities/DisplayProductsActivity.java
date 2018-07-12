@@ -93,30 +93,17 @@ public class DisplayProductsActivity extends AppCompatActivity {
      */
     public void updateTotalPrice() {
         double totalPrice = 0;
-        double price;
-        for (Product product : getProductListHolders()) {
-            if (product.getQuantity() > 0) {
-                totalPrice += product.getPrice() * product.getQuantity();
+        ProductListAdapter adapter = (ProductListAdapter) productList.getAdapter();
+        if(adapter != null){
+            for (Product product : adapter.getProducts()) {
+                if (product.getQuantity() > 0) {
+                    totalPrice += product.getPrice() * product.getQuantity();
+                }
             }
         }
         this.total.setText("R$ " + totalPrice);
     }
 
-    /**
-     * Retrieve a ArrayList of Product using RecyclerView adapter
-     * to get viewHolders updated data.
-     *
-     * @return List of Products and quantities selected
-     */
-    private ArrayList<Product> getProductListHolders() {
-        ArrayList<Product> products = new ArrayList<Product>();
-        ProductListAdapter.ViewHolder product = null;
-        ProductListAdapter adapter = (ProductListAdapter) productList.getAdapter();
-        for (int i = 0; i < productList.getChildCount(); i++) {
-            products.add(adapter.getProduct(i, productList));
-        }
-        return products;
-    }
 
     /**
      * Get products by filtering RecyclerView products where quantity > 0;
@@ -126,11 +113,11 @@ public class DisplayProductsActivity extends AppCompatActivity {
      */
     private ArrayList<Product> getSelectedProducts() {
         ArrayList<Product> products = new ArrayList<Product>();
+        ProductListAdapter adapter = (ProductListAdapter) productList.getAdapter();
 
-        for (Product product : getProductListHolders()) {
-            Log.d("RecyclerView", "Product: " + product.toString());
+        for (Product product : adapter.getProducts()) {
             if (product.getQuantity() > 0) {
-                products.add(product);
+                products.add(product.clone());
             }
         }
 
@@ -151,16 +138,16 @@ public class DisplayProductsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Print all products in this sale.
                 ArrayList<Product> products = getSelectedProducts();
-                printerManager.print(products);
+                //printerManager.print(products);
 
                 Log.d("Sale", "Products: " + products.toString());
 
-                // Reset all products quantity to 0
-                refreshProducts();
 
                 // Sends the sale to the API
                 StringRequest productsRequest = requestBuilder.postProductsRequest(v.getContext(), products);
                 queue.add(productsRequest);
+                // Reset all products quantity to 0
+                refreshProducts();
             }
         });
     }

@@ -28,7 +28,7 @@ public class Product {
 
     @Override
     public String toString(){
-        return  id + " "+ name + " " + price + " API_id:" + apiId;
+        return  "id:"+id + ". "+quantity + " " + name + " " + price + " API_id:" + apiId;
     }
     public int getId() {
         return id;
@@ -67,5 +67,11 @@ public class Product {
 
     public void setApiId(int api_id) {
         this.apiId = api_id;
+    }
+
+    public Product clone(){
+        Product product = new Product(id,name,price,quantity);
+        product.setApiId(apiId);
+        return product;
     }
 }

@@ -73,6 +73,7 @@ public class RequestBuilder {
                 for(Product product: products){
                     jsonProducts.put(getJsonObject(product));
                 }
+                Log.d("JsonProducts", jsonProducts.toString());
                 return getBytes(jsonProducts);
             }
 

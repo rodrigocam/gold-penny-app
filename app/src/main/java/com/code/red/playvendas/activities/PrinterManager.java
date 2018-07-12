@@ -11,7 +11,6 @@ import com.code.red.playvendas.exceptions.SendDataException;
 import com.code.red.playvendas.model.Product;
 
 import com.redcode.escposxml.EscPosDriver;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,6 +80,9 @@ public class PrinterManager {
             /* alert dialog saying that
             bluetooth connection failed and return
             to previous activity */
+        } catch (RuntimeException e ){
+            /* No btService
+            * */
         }
     }
 

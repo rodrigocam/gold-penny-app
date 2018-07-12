@@ -164,11 +164,11 @@ public class RequestBuilder {
                                     Toast.LENGTH_LONG).show();
                         } else if (error instanceof AuthFailureError) {
                             Toast.makeText(activity.getApplicationContext(),
-                                    "Usuário ou senha inválidos.",
+                                    "Authentication failure",
                                     Toast.LENGTH_SHORT).show();
                         } else if (error instanceof ServerError) {
                             Toast.makeText(activity.getApplicationContext(),
-                                    "Não foi possível encontrar o Servidor.",
+                                    "Usuário ou senha inválidos.",
                                     Toast.LENGTH_SHORT).show();
                         } else if (error instanceof NetworkError) {
                             Toast.makeText(activity.getApplicationContext(),

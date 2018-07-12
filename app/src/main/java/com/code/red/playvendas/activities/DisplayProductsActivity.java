@@ -82,7 +82,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
      */
     private void refreshProducts() {
         productViewModel.getProducts().observe(this, products -> {
-            productList.setAdapter(new ProductListAdapter(this, products));
+            productList.setAdapter(new ProductListAdapter(this,this, products));
             updateTotalPrice();
         });
     }

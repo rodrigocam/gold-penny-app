@@ -22,8 +22,8 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     private ArrayList<Product> _products;
     private DisplayProductsActivity activity;
 
-    public ProductListAdapter(DisplayProductsActivity activity, List<Product> products) {
-        _inflater = (LayoutInflater) activity.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public ProductListAdapter(DisplayProductsActivity activity, Context context, List<Product> products) {
+        _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         _products = createArrayListOfProducts(products);
         Log.d("ProductListAdapter", products.toString());
         this.activity = activity;

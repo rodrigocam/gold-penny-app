@@ -24,4 +24,7 @@ public interface ProductDao {
 
     @Query("SELECT COUNT(*) from product")
     int getProductCount();
+
+    @Query("DELETE FROM product")
+    public void deleteProducts();
 }

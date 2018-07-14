@@ -138,7 +138,7 @@ public class DisplayProductsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Print all products in this sale.
                 ArrayList<Product> products = getSelectedProducts();
-                //printerManager.print(products);
+                printerManager.print(products);
 
                 Log.d("Sale", "Products: " + products.toString());
 

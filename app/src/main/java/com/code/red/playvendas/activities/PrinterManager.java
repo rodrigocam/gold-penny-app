@@ -2,6 +2,7 @@ package com.code.red.playvendas.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.code.red.playvendas.R;
@@ -12,8 +13,12 @@ import com.code.red.playvendas.model.Product;
 
 import com.redcode.escposxml.EscPosDriver;
 import java.io.InputStream;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class PrinterManager {
     private BluetoothService btService = null;
@@ -26,6 +31,10 @@ public class PrinterManager {
 
     /* XML Template with the print template */
     private InputStream xmlFile;
+
+    private NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 
     public PrinterManager(Activity activity) {
         this.btService = new BluetoothService();
@@ -46,11 +55,12 @@ public class PrinterManager {
      */
     public void print(ArrayList<Product> products) {
         ArrayList<Product> selectedProducts = products;
+        this.simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3"));
 
         for (Product product : selectedProducts) {
             this.escPosDriver.setTemplateText("product", product.getName());
-            this.escPosDriver.setTemplateText("price", "R$ " + product.getPrice() + "0");
-            this.escPosDriver.setTemplateText("date", "Data: " + new Date().toString());
+            this.escPosDriver.setTemplateText("price", this.numberFormat.format(product.getPrice()));
+            this.escPosDriver.setTemplateText("date", this.simpleDateFormat.format(new Date()));
 
             for (int i = 0; i < product.getQuantity(); i++) {
                 sendProductToPrint(this.escPosDriver.getBytes());

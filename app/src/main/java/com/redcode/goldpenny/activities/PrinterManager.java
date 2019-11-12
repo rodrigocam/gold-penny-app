@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.redcode.goldpenny.R;
 import com.redcode.goldpenny.bluetooth.BluetoothService;
 import com.redcode.goldpenny.exceptions.BluetoothConnectionException;
+import com.redcode.goldpenny.exceptions.FindPrinterException;
 import com.redcode.goldpenny.exceptions.SendDataException;
 import com.redcode.goldpenny.model.Product;
 
@@ -52,7 +53,7 @@ public class PrinterManager {
      * Transforms a sale into byte array to print using a xml template.
      * @param products Product list from a sale
      */
-    public void print(ArrayList<Product> products) {
+    public void print(ArrayList<Product> products) throws FindPrinterException{
         ArrayList<Product> selectedProducts = products;
         this.simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT-3"));
 
@@ -60,9 +61,12 @@ public class PrinterManager {
             this.escPosDriver.setTemplateText("product", product.getName());
             this.escPosDriver.setTemplateText("price", this.numberFormat.format(product.getPrice()));
             this.escPosDriver.setTemplateText("date", this.simpleDateFormat.format(new Date()));
-
-            for (int i = 0; i < product.getQuantity(); i++) {
-                sendProductToPrint(this.escPosDriver.getBytes());
+            try{
+                for (int i = 0; i < product.getQuantity(); i++) {
+                    sendProductToPrint(this.escPosDriver.getBytes());
+                }
+            }catch (FindPrinterException e){
+                throw new FindPrinterException();
             }
         }
     }
@@ -71,14 +75,15 @@ public class PrinterManager {
      * Send a sale to the bluetooth printer
      * @param productData Sale data
      */
-    private void sendProductToPrint(byte[] productData) {
+    private void sendProductToPrint(byte[] productData) throws FindPrinterException{
         try {
             this.btService.sendByteData(productData);
         } catch (SendDataException e) {
             e.printStackTrace();
             Toast.makeText(context,
                     "Failed to print",
-                    Toast.LENGTH_SHORT);
+                    Toast.LENGTH_SHORT).show();
+            throw new FindPrinterException();
         }
     }
 
@@ -86,6 +91,10 @@ public class PrinterManager {
         try {
             this.btService.startConnection();
         } catch (BluetoothConnectionException e) {
+
+            Toast.makeText(context,
+                    "Bluetooth connection failed. Probably Printer is not available",
+                    Toast.LENGTH_LONG).show();
             /* alert dialog saying that
             bluetooth connection failed and return
             to previous activity */

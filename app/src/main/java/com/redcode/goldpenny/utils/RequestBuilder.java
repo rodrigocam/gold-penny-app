@@ -32,7 +32,7 @@ public class RequestBuilder {
     private Token token;
 
     // Constant with server IP for requests. Used here and in Webservice
-    public static final String SERVER_URL ="http://159.89.140.211/";
+    public static final String SERVER_URL ="http://157.245.218.107/";
 
     public RequestBuilder(Token token){
         this.token = token;

@@ -15,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.redcode.goldpenny.R;
+import com.redcode.goldpenny.exceptions.FindPrinterException;
 import com.redcode.goldpenny.model.Product;
 import com.redcode.goldpenny.utils.RequestBuilder;
 import com.redcode.goldpenny.viewmodel.ProductViewModel;
@@ -138,16 +139,19 @@ public class DisplayProductsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Print all products in this sale.
                 ArrayList<Product> products = getSelectedProducts();
-                printerManager.print(products);
+                try {
+                    printerManager.print(products);
+                    Log.d("Sale", "Products: " + products.toString());
 
-                Log.d("Sale", "Products: " + products.toString());
+                    // Sends the sale to the API
+                    StringRequest productsRequest = requestBuilder.postProductsRequest(v.getContext(), products);
+                    queue.add(productsRequest);
+                    // Reset all products quantity to 0
+                    refreshProducts();
+                } catch (FindPrinterException e) {
+                    e.printStackTrace();
+                }
 
-
-                // Sends the sale to the API
-                StringRequest productsRequest = requestBuilder.postProductsRequest(v.getContext(), products);
-                queue.add(productsRequest);
-                // Reset all products quantity to 0
-                refreshProducts();
             }
         });
     }

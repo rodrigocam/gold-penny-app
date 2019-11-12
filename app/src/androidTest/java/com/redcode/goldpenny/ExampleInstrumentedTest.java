@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.code.red.playvendas", appContext.getPackageName());
+        assertEquals("com.redcode.playvendas", appContext.getPackageName());
     }
 }
